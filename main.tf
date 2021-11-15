@@ -1,54 +1,44 @@
-#locals {
-#  transit_gateway = "todo"
-#  vpc_attachments_without_default_route_table_association = {
-#    for k, v in var.vpc_attachments : k => v if lookup(v, "transit_gateway_default_route_table_association", true) != true
-#  }
-#
-#  vpc_attachments_without_default_route_table_propagation = {
-#    for k, v in var.vpc_attachments : k => v if lookup(v, "transit_gateway_default_route_table_propagation", true) != true
-#  }
-#
-#  # List of maps with key and route values
-#  vpc_attachments_with_routes = chunklist(flatten([
-#    for k, v in var.vpc_attachments : setproduct([{ key = k }], v["tgw_routes"]) if length(lookup(v, "tgw_routes", {})) > 0
-#  ]), 2)
-#
-#  tgw_default_route_table_tags_merged = merge(
-#    {
-#      "Name" = format("%s", var.name)
-#    },
-#    var.tags,
-#    var.tgw_default_route_table_tags,
-#  )
-#
-#  vpc_route_table_destination_cidr = flatten([
-#    for k, v in var.vpc_attachments : [
-#      for rtb_id in lookup(v, "vpc_route_table_ids", []) : {
-#        rtb_id = rtb_id
-#        cidr   = v["tgw_destination_cidr"]
-#      }
-#    ]
-#  ])
-#}
-#
-#resource "aws_ec2_transit_gateway" "this" {
-#  for_each = local.transit_gateway
-#  description                     = coalesce(var.description, var.name)
-#  amazon_side_asn                 = var.amazon_side_asn
-#  default_route_table_association = var.enable_default_route_table_association ? "enable" : "disable"
-#  default_route_table_propagation = var.enable_default_route_table_propagation ? "enable" : "disable"
-#  auto_accept_shared_attachments  = var.enable_auto_accept_shared_attachments ? "enable" : "disable"
-#  vpn_ecmp_support                = var.enable_vpn_ecmp_support ? "enable" : "disable"
-#  dns_support                     = var.enable_dns_support ? "enable" : "disable"
-#
-#  tags = merge(
-#    {
-#      "Name" = format("%s", var.name)
-#    },
-#    var.tags,
-#    var.tgw_tags,
-#  )
-#}
+resource "aws_ec2_transit_gateway" "this" {
+  for_each = var.tgws
+  description                     = coalesce(each.value["description"], each.key)
+  amazon_side_asn                 = lookup(each.value, "amazon_side_asn", null)
+  default_route_table_association = lookup(each.value, "default_route_table_association", "disable")
+  default_route_table_propagation = lookup(each.value, "default_route_table_propagation", "disable")
+  auto_accept_shared_attachments  = lookup(each.value, "auto_accept_shared_attachments", "disable")
+  dns_support                     = lookup(each.value, "dns_support", "enable")
+  vpn_ecmp_support                = lookup(each.value, "vpn_ecmp_support", "enable")
+  tags = merge(
+    {
+      "Name" = each.key
+    },
+    var.tags,
+    each.value["tags"]
+  )
+}
+
+resource "aws_ec2_transit_gateway_vpc_attachment" "this" {
+  for_each = var.tgw_vpc_attachments
+
+  transit_gateway_id = data.aws_ec2_transit_gateway.this[each.value["tgw_name"]].id
+  vpc_id             = data.aws_vpc.this[each.value["vpc_name"]].id
+  subnet_ids         = [ for x in each.value["subnets"]: data.aws_subnets.this[x].ids ][0]
+
+  dns_support                                     = lookup(each.value, "dns_support", true) ? "enable" : "disable"
+  ipv6_support                                    = lookup(each.value, "ipv6_support", false) ? "enable" : "disable"
+  appliance_mode_support                          = lookup(each.value, "appliance_mode_support", true) ? "enable" : "disable"
+  transit_gateway_default_route_table_association = lookup(each.value, "transit_gateway_default_route_table_association", false)
+  transit_gateway_default_route_table_propagation = lookup(each.value, "transit_gateway_default_route_table_propagation", false)
+
+  tags = merge(
+    {
+      Name = format("%s-%s", var.name, each.key)
+    },
+    var.tags,
+    var.tgw_vpc_attachment_tags,
+  )
+  depends_on = [aws_vpc.vpc, aws_ec2_transit_gateway.this, aws_subnet.private, aws_subnet.public]
+}
+
 #
 #
 ##########################
