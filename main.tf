@@ -1,5 +1,5 @@
 resource "aws_ec2_transit_gateway" "this" {
-  for_each = var.tgws
+  for_each                        = var.tgws
   description                     = coalesce(each.value["description"], each.key)
   amazon_side_asn                 = lookup(each.value, "amazon_side_asn", null)
   default_route_table_association = lookup(each.value, "default_route_table_association", "disable")
@@ -21,7 +21,7 @@ resource "aws_ec2_transit_gateway_vpc_attachment" "this" {
 
   transit_gateway_id = data.aws_ec2_transit_gateway.this[each.value["tgw_name"]].id
   vpc_id             = data.aws_vpc.this[each.value["vpc_name"]].id
-  subnet_ids         = [ for x in each.value["subnets"]: data.aws_subnets.this[x].ids ][0]
+  subnet_ids         = [for x in each.value["subnets"] : data.aws_subnets.this[x].ids][0]
 
   dns_support                                     = lookup(each.value, "dns_support", true) ? "enable" : "disable"
   ipv6_support                                    = lookup(each.value, "ipv6_support", false) ? "enable" : "disable"

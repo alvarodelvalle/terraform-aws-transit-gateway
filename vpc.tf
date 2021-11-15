@@ -82,5 +82,5 @@ resource "aws_route_table_association" "subnets" {
   for_each       = var.route_table_subnet_associations
   route_table_id = data.aws_route_table.this[each.key].id
   subnet_id      = data.aws_subnets.this[each.value["route_subnet_association"]].ids[0]
-  depends_on = [aws_route_table.this]
+  depends_on     = [aws_route_table.this]
 }
