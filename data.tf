@@ -4,7 +4,7 @@ data "aws_vpc" "this" {
     name   = "tag:Name"
     values = [each.key]
   }
-  depends_on = [aws_vpc.vpc]
+  depends_on = [aws_vpc.this]
 }
 
 data "aws_route_table" "this" {
@@ -32,4 +32,12 @@ data "aws_subnets" "this" {
     values = [each.key]
   }
   depends_on = [aws_subnet.public, aws_subnet.private]
+}
+
+data "aws_internet_gateway" "this" {
+  for_each = var.vpcs
+  filter {
+    name   = "tag:Name"
+    values = [lookup(each.value, ["igw_tags"]["Name"], null)]
+  }
 }

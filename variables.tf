@@ -176,31 +176,114 @@ variable "public_subnets" {
 
 variable "vpc_route_tables" {
   description = "VPC Route Tables"
-  type        = map(any)
   default = {
     rt-security-mgmt-us-east = {
-      name     = "rt-security-mgmt-us-east"
       vpc_name = "vpc-security-us-east"
       routes = [
         {
           route_cidr_destination    = "0.0.0.0/0"
-          transit_gateway_id        = "tgw-security-us-east"
+          transit_gateway_name        = "tgw-security-us-east"
           route_subnets_association = ["sn-security-mgmt-us-east-1a", "sn-security-mgmt-us-east-1b"]
         }
       ]
-    }
+    },
+    rt-security-public-us-east = {
+      vpc_name = "vpc-security-us-east"
+      routes = [
+        {
+          route_cidr_destination    = "0.0.0.0/0"
+          gateway_name = "igw-security-us-east"
+          route_subnets_association = ["sn-security-public-us-east-1a", "sn-security-public-us-east-1b"]
+        }
+      ]
+    },
+    rt-security-private-us-east = {
+      vpc_name = "vpc-security-us-east"
+      routes = []
+    },
+    rt-security-tgw-us-east-1a = {
+      vpc_name = "vpc-security-us-east"
+      routes = [
+        {
+          route_cidr_destination    = "0.0.0.0/0"
+          vpc_endpoint_name = "gwlbe-security-us-east-1a"
+          route_subnets_association = ["sn-security-tgw-us-east-1a"]
+        }
+      ]
+    },
+    rt-security-tgw-us-east-1b = {
+      vpc_name = "vpc-security-us-east"
+      routes = [
+        {
+          route_cidr_destination    = "0.0.0.0/0"
+          vpc_endpoint_name = "gwlbe-security-us-east-1b"
+          route_subnets_association = ["sn-security-tgw-us-east-1b"]
+        }
+      ]
+    },
+    rt-security-gwlbe-us-east = {
+      vpc_name = "vpc-security-us-east"
+      routes = [
+        {
+          route_cidr_destination    = "0.0.0.0/0"
+          transit_gateway_name        = "tgw-security-us-east"
+          route_subnets_association = ["sn-security-gwlbe-us-east-1a", "sn-security-gwlbe-us-east-1b"]
+        }
+      ]
+    },
+
   }
 }
 
 variable "route_table_subnet_associations" {
   description = ""
-  type        = map(any)
   default = {
     rt-security-mgmt-us-east = {
       route_subnet_association = "sn-security-mgmt-us-east-1a"
     },
     rt-security-mgmt-us-east = {
       route_subnet_association = "sn-security-mgmt-us-east-1b"
+    },
+    rt-security-public-us-east = {
+      route_subnet_association = "sn-security-public-us-east-1a"
+    },
+    rt-security-public-us-east = {
+      route_subnet_association = "sn-security-public-us-east-1b"
+    },
+    rt-security-private-us-east = {
+      route_subnet_association = "sn-security-private-us-east-1a"
+    },
+    rt-security-private-us-east = {
+      route_subnet_association = "sn-security-private-us-east-1b"
+    },
+    rt-security-tgw-us-east-1a = {
+      route_subnet_association = "sn-security-tgw-us-east-1a"
+    },
+    rt-security-tgw-us-east-1b = {
+      route_subnet_association = "sn-security-tgw-us-east-1b"
+    },
+    rt-security-gwlbe-us-east = {
+      route_subnet_association = "sn-security-gwlbe-us-east-1a"
+    },
+    rt-security-gwlbe-us-east = {
+      route_subnet_association = "sn-security-gwlbe-us-east-1b"
+    }
+  }
+}
+
+variable "vpc_endpoints" {
+  description = ""
+  type = map(any)
+  default = {
+    gwlbe-security-us-east-1a = {
+      vpc_name = "vpc-security-us-east"
+      endpoint_service_name = "com.amazonaws.vpce.us-east-1.vpce-svc-03c15019b985b9d19"
+      endpoint_subnet = "sn-security-gwlbe-us-east-1a"
+    },
+    gwlbe-security-us-east-1b = {
+      vpc_name = "vpc-security-us-east"
+      endpoint_service_name = "com.amazonaws.vpce.us-east-1.vpce-svc-03c15019b985b9d19"
+      endpoint_subnet = "sn-security-gwlbe-us-east-1b"
     }
   }
 }
@@ -233,6 +316,30 @@ variable "tgw_vpc_attachments" {
       tgw_name    = "tgw-security-us-east"
       subnets     = ["sn-security-tgw-us-east-1a", "sn-security-tgw-us-east-1b"]
       description = "VPC attachment to Security VPC"
+    }
+  }
+}
+
+// TODO - do VPC's resources first
+variable "tgw_route_tables" {
+  description = ""
+  type = map(any)
+  default = {
+    tgw-rt-spoke-us-east = {
+      transit_gateway_name = "tgw-security-us-east"
+      associations = []
+      route_propagations = []
+      tgw_route_table_tags = {
+        Purpose = "TGW Route Table for Spoke VPC"
+      }
+    }
+    tgw-rt-security-us-east = {
+      transit_gateway_name = "tgw-security-us-east"
+      associations = []
+      route_propagations = []
+      tgw_route_table_tags = {
+        Purpose = "TGW Route Table for Security VPC"
+      }
     }
   }
 }
