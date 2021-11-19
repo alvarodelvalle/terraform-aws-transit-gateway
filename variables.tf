@@ -496,8 +496,8 @@ variable "elbs" {
         gwlb-target-security-us-east = {
           type = "ip"
           targets = [
-            "10.201.1.10:6081",
-            "10.201.64.10:6081"
+            "10.201.1.10",
+            "10.201.64.10"
           ]
         }
       }
@@ -519,12 +519,19 @@ variable "elbs" {
         alb-target-inbound-app1-us-east = {
           type = "ip"
           targets = [
-
+            #TODO - IP Addresses of application servers and ports
           ]
         }
       }
+      listeners = {
+        http = {
+          protocol = "HTTP"
+          port = "80"
+          target_group = "alb-target-inbound-app1-us-east"
+        }
+      }
       tags = {
-        Purpose = "Gateway Load Balancer for Security"
+        Purpose = "Load Balancer for apps"
       }
     }
     alb-inbound-app2-us-east = {
@@ -541,12 +548,19 @@ variable "elbs" {
         alb-target-inbound-app2-us-east = {
           type = "ip"
           targets = [
-
+            #TODO - IP Addresses of application servers and ports
           ]
         }
       }
+      listeners = {
+        http = {
+          protocol = "HTTP"
+          port = "80"
+          target_group = "alb-target-inbound-app2-us-east"
+        }
+      }
       tags = {
-        Purpose = "Gateway Load Balancer for Security"
+        Purpose = "Load Balancer for apps"
       }
     }
   }
