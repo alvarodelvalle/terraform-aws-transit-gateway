@@ -1,7 +1,7 @@
 locals {
   module_name = "terraform-aws-transit-gateway"
   lb_targets = flatten([
-    for lb_key, lb in var.gateway_lbs : [
+    for lb_key, lb in var.elbs : [
       for t_key, t in lb.targets : {
         lb_key      = lb_key
         target_key  = t_key

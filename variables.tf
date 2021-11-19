@@ -30,6 +30,24 @@ variable "vpcs" {
         Description = "Internet Gateway for Security VPC"
       }
     }
+    vpc-inbound-us-east = {
+      cidr_block                       = "10.200.0.0/16"
+      instance_tenancy                 = "default"
+      enable_dns_support               = true
+      enable_dns_hostnames             = false
+      enable_classiclink               = null
+      enable_classiclink_dns_support   = null
+      assign_generated_ipv6_cidr_block = false
+      tags = {
+        Name    = "vpc-inbound-us-east"
+        Purpose = "Inbound VPC for all traffic inspection"
+      }
+      igw_tags = {
+        Name        = "igw-inbound-us-east"
+        VPCOwner    = "vpc-inbound-us-east"
+        Description = "Internet Gateway for Inbound VPC"
+      }
+    }
   }
 }
 
@@ -145,7 +163,60 @@ variable "private_subnets" {
         Purpose = "Gateway Load Balancer"
       }
     },
-
+    sn-inbound-tgw-us-east-1a = {
+      vpc_name                = "vpc-inbound-us-east"
+      availability_zone       = "us-east-1a"
+      cidr_block              = "10.200.0.0/24"
+      map_public_ip_on_launch = false
+      tags = {
+        Purpose = "Transit Gateway Attachment Interface"
+      }
+    },
+    sn-inbound-gwlbe-app1-us-east-1a = {
+      vpc_name                = "vpc-inbound-us-east"
+      availability_zone       = "us-east-1a"
+      cidr_block              = "10.200.2.0/24"
+      map_public_ip_on_launch = false
+      tags = {
+        Purpose = "Gateway Load Balancer Endpoint"
+      }
+    },
+    sn-inbound-gwlbe-app2-us-east-1a = {
+      vpc_name                = "vpc-inbound-us-east"
+      availability_zone       = "us-east-1a"
+      cidr_block              = "10.200.4.0/24"
+      map_public_ip_on_launch = false
+      tags = {
+        Purpose = "Gateway Load Balancer Endpoint"
+      }
+    },
+    sn-inbound-tgw-us-east-1b = {
+      vpc_name                = "vpc-inbound-us-east"
+      availability_zone       = "us-east-1b"
+      cidr_block              = "10.200.64.0/24"
+      map_public_ip_on_launch = false
+      tags = {
+        Purpose = "Transit Gateway Attachment Interface"
+      }
+    },
+    sn-inbound-gwlbe-app1-us-east-1b = {
+      vpc_name                = "vpc-inbound-us-east"
+      availability_zone       = "us-east-1b"
+      cidr_block              = "10.200.66.0/24"
+      map_public_ip_on_launch = false
+      tags = {
+        Purpose = "Gateway Load Balancer Endpoint"
+      }
+    },
+    sn-inbound-gwlbe-app2-us-east-1b = {
+      vpc_name                = "vpc-inbound-us-east"
+      availability_zone       = "us-east-1b"
+      cidr_block              = "10.200.68.0/24"
+      map_public_ip_on_launch = false
+      tags = {
+        Purpose = "Gateway Load Balancer Endpoint"
+      }
+    },
   }
 }
 
@@ -171,6 +242,42 @@ variable "public_subnets" {
         Purpose = "Public Facing Interface"
       }
     }
+    sn-inbound-alb-app1-us-east-1a = {
+      vpc_name                = "vpc-inbound-us-east"
+      availability_zone       = "us-east-1a"
+      cidr_block              = "10.200.1.0/24"
+      map_public_ip_on_launch = true
+      tags = {
+        Purpose = "Application Load Balancer"
+      }
+    },
+    sn-inbound-alb-app2-us-east-1a = {
+      vpc_name                = "vpc-inbound-us-east"
+      availability_zone       = "us-east-1a"
+      cidr_block              = "10.200.3.0/24"
+      map_public_ip_on_launch = true
+      tags = {
+        Purpose = "Application Load Balancer"
+      }
+    },
+    sn-inbound-alb-app1-us-east-1b = {
+      vpc_name                = "vpc-inbound-us-east"
+      availability_zone       = "us-east-1b"
+      cidr_block              = "10.200.65.0/24"
+      map_public_ip_on_launch = true
+      tags = {
+        Purpose = "Application Load Balancer"
+      }
+    },
+    sn-inbound-alb-app2-us-east-1b = {
+      vpc_name                = "vpc-inbound-us-east"
+      availability_zone       = "us-east-1b"
+      cidr_block              = "10.200.67.0/24"
+      map_public_ip_on_launch = true
+      tags = {
+        Purpose = "Application Load Balancer"
+      }
+    },
   }
 }
 
@@ -309,7 +416,7 @@ variable "tgws" {
 
 variable "tgw_vpc_attachments" {
   description = ""
-  type        = map(any)
+  type        = any
   default = {
     tgw-attach-security-us-east = {
       vpc_name                                        = "vpc-security-us-east"
@@ -322,13 +429,24 @@ variable "tgw_vpc_attachments" {
       transit_gateway_default_route_table_association = false
       transit_gateway_default_route_table_propagation = false
     }
+    tgw-attach-inbound-us-east = {
+      vpc_name                                        = "vpc-inbound-us-east"
+      tgw_name                                        = "tgw-security-us-east"
+      subnets                                         = ["sn-inbound-tgw-us-east-1a", "sn-inbound-tgw-us-east-1b"]
+      description                                     = "VPC attachment to Inbound VPC"
+      dns_support                                     = true
+      ipv6_support                                    = false
+      appliance_mode_support                          = true
+      transit_gateway_default_route_table_association = false
+      transit_gateway_default_route_table_propagation = false
+    }
   }
 }
 
 variable "tgw_route_tables" {
   description = ""
   default = {
-    #TODO - add once vpc's are defined
+    #TODO - add more context and tf resources in main.tf once vpc's are defined
     tgw-rt-spoke-us-east = {
       transit_gateway_name = "tgw-security-us-east"
       vpc_associations     = ["vpc-security-us-east", "vpc-inbound-us-east"]
@@ -347,10 +465,19 @@ variable "tgw_route_tables" {
         Purpose = "TGW Route Table for Security VPC"
       }
     }
+    tgw-rt-inbound-us-east = {
+      transit_gateway_name = "tgw-security-us-east"
+      vpc_associations     = ["tgw-attach-inbound-us-east"]
+      route_propagations   = ["tgw-attach-inbound-us-east"]
+      routes = []
+      tgw_route_table_tags = {
+        Purpose = "TGW Route Table for Inbound VPC"
+      }
+    }
   }
 }
 
-variable "gateway_lbs" {
+variable "elbs" {
   description = ""
   type        = any
   default = {
@@ -371,6 +498,50 @@ variable "gateway_lbs" {
           targets = [
             "10.201.1.10:6081",
             "10.201.64.10:6081"
+          ]
+        }
+      }
+      tags = {
+        Purpose = "Gateway Load Balancer for Security"
+      }
+    }
+    alb-inbound-app1-us-east = {
+      type       = "application"
+      cross-zone = true
+      azs        = ["us-east-1a", "us-east-1b"]
+      vpc_name   = "vpc-inbound-us-east"
+      subnets = [
+        "sn-inbound-alb-app1-us-east-1a",
+        "sn-inbound-alb-app1-us-east-1b"
+      ]
+      security_groups = ["sg-inbound-public-us-east"]
+      targets = {
+        alb-target-inbound-app1-us-east = {
+          type = "ip"
+          targets = [
+
+          ]
+        }
+      }
+      tags = {
+        Purpose = "Gateway Load Balancer for Security"
+      }
+    }
+    alb-inbound-app2-us-east = {
+      type       = "application"
+      cross-zone = true
+      azs        = ["us-east-1a", "us-east-1b"]
+      vpc_name   = "vpc-inbound-us-east"
+      security_groups = ["sg-inbound-public-us-east"]
+      subnets = [
+        "sn-inbound-alb-app2-us-east-1a",
+        "sn-inbound-alb-app2-us-east-1b"
+      ]
+      targets = {
+        alb-target-inbound-app2-us-east = {
+          type = "ip"
+          targets = [
+
           ]
         }
       }
@@ -494,6 +665,33 @@ variable "security_groups" {
       tags = {
         Purpose = "Firewall Public Interface"
       }
+    }
+    sg-inbound-public-us-east = {
+      vpc_name = "vpc-inbound-us-east"
+      rules = [
+        {
+          description     = "All - Load Balancer Public"
+          type            = "ingress"
+          protocol        = "TCP"
+          cidrs           = ["0.0.0.0/0"]
+          security_groups = null
+          prefix_list_ids = null
+          self            = false
+          from_port       = 80
+          to_port         = 80
+        },
+        {
+          description     = "All - Load Balancer Public"
+          type            = "egress"
+          protocol        = "-1"
+          cidrs           = ["0.0.0.0/0"]
+          security_groups = null
+          prefix_list_ids = null
+          self            = false
+          from_port       = 0
+          to_port         = 0
+        },
+      ]
     }
   }
 }
