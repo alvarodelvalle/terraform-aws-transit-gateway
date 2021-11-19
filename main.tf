@@ -18,9 +18,9 @@ resource "aws_ec2_transit_gateway" "this" {
 
 resource "aws_ec2_transit_gateway_vpc_attachment" "this" {
   for_each                                        = var.tgw_vpc_attachments
-  transit_gateway_id                              = aws_ec2_transit_gateway.this[each.value["tgw_name"]].id
-  vpc_id                                          = aws_vpc.this[each.value["vpc_name"]].id
-  subnet_ids                                      = [for x in each.value["subnets"] : data.aws_subnets.this[x].ids][0]
+  transit_gateway_id                              = aws_ec2_transit_gateway.this[each.value.tgw_name].id
+  vpc_id                                          = aws_vpc.this[each.value.vpc_name].id
+  subnet_ids                                      = [for x in each.value.subnets : data.aws_subnets.this[x].ids][0]
   dns_support                                     = lookup(each.value, "dns_support", true) ? "enable" : "disable"
   ipv6_support                                    = lookup(each.value, "ipv6_support", false) ? "enable" : "disable"
   appliance_mode_support                          = lookup(each.value, "appliance_mode_support", true) ? "enable" : "disable"
@@ -73,16 +73,16 @@ resource "aws_ec2_transit_gateway_route_table" "this" {
 
 resource "aws_lb" "this" {
   for_each                         = var.gateway_lbs
-  load_balancer_type               = each.value["type"]
+  load_balancer_type               = each.value.type
   name                             = each.key
-  subnets                          = [for x in each.value["subnets"] : data.aws_subnets.this[x].ids][0]
+  subnets                          = [for x in each.value.subnets : data.aws_subnets.this[x].ids][0]
   enable_cross_zone_load_balancing = lookup(each.value, "cross-zone", null)
   tags = merge(
     {
       "Name" = each.key
     },
     var.tags,
-    each.value["tags"]
+    each.value.tags
   )
 }
 
