@@ -1,7 +1,3 @@
-locals {
-  module_name = "terraform-aws-transit-gateway"
-}
-
 resource "aws_vpc" "this" {
   for_each                         = var.vpcs
   cidr_block                       = lookup(each.value, "cidr_block", "10.0.0.0/16")
@@ -71,33 +67,36 @@ resource "aws_route_table" "this" {
     for_each = each.value["routes"]
     content {
       cidr_block         = route.value["route_cidr_destination"]
-      transit_gateway_id = lookup(route.value, "transit_gateway_name", null) != null ?
-        aws_ec2_transit_gateway.this[route.value["transit_gateway_name"]].id : null
+      transit_gateway_id = lookup(route.value, "transit_gateway_name", null) != null ? aws_ec2_transit_gateway.this[route.value["transit_gateway_name"]].id : null
       // IGW
-      gateway_id = lookup(route.value, "gateway_name", null) != null ?
-        data.aws_internet_gateway.this[each.value["vpc_name"]].id : null
-      vpc_endpoint_id = lookup(route.value, "vpc_endpoint_name", null) != null ?
-        aws_vpc_endpoint.this[route.value["vpc_endpoint_name"]].id : null
+      gateway_id      = lookup(route.value, "gateway_name", null) != null ? data.aws_internet_gateway.this[each.value["vpc_name"]].id : null
+      vpc_endpoint_id = lookup(route.value, "vpc_endpoint_name", null) != null ? aws_vpc_endpoint.this[route.value["vpc_endpoint_name"]].id : null
     }
   }
 }
 
 resource "aws_route_table_association" "subnets" {
   for_each       = var.route_table_subnet_associations
-  route_table_id = aws_route_table.this[each.key]
+  route_table_id = aws_route_table.this[each.key].id
   subnet_id      = data.aws_subnets.this[each.value["route_subnet_association"]].ids[0]
   depends_on     = [aws_subnet.public, aws_subnet.private]
 }
 
 resource "aws_vpc_endpoint" "this" {
-  for_each = var.vpc_endpoints
-  auto_accept = true
+  for_each     = var.vpc_endpoints
+  auto_accept  = true
   service_name = lookup(each.value, "endpoint_service_name", null)
   vpc_id       = aws_vpc.this[each.value["vpc_name"]].id
 }
 
 resource "aws_vpc_endpoint_subnet_association" "this" {
-  for_each = var.vpc_endpoints
+  for_each        = var.vpc_endpoints
   subnet_id       = data.aws_subnets.this[each.value["endpoint_subnet"]].ids[0]
   vpc_endpoint_id = aws_vpc_endpoint.this[each.key].id
+}
+
+resource "aws_vpc_endpoint_service" "this" {
+  for_each                   = { for k, v in var.vpc_endpoint_service : k => v if v.type == "gateway" }
+  acceptance_required        = false
+  gateway_load_balancer_arns = [aws_lb.this[each.value.target].arn]
 }
