@@ -40,4 +40,5 @@ data "aws_internet_gateway" "this" {
     name   = "tag:Name"
     values = [for x in each.value["igw_tags"] : x]
   }
+  depends_on = [aws_vpc.this, aws_internet_gateway.this]
 }

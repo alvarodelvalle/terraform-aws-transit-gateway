@@ -93,11 +93,12 @@ resource "aws_lb_target_group" "ip" {
   protocol    = "HTTP"
   vpc_id      = aws_vpc.this[each.value.vpc_name].id
 }
-
+# TODO - do these after firewall registration. This is going to need a `depends_on`
 #resource "aws_lb_target_group_attachment" "this" {
 #  target_group_arn = ""
 #  target_id        = ""
 #}
+
 #resource "aws_route" "tgw" {
 #  for_each = { for x in local.vpc_route_table_destination_cidr : x.rtb_id => x.cidr }
 #  route_table_id         = each.key

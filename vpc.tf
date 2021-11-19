@@ -100,3 +100,43 @@ resource "aws_vpc_endpoint_service" "this" {
   acceptance_required        = false
   gateway_load_balancer_arns = [aws_lb.this[each.value.target].arn]
 }
+
+resource "aws_security_group" "this" {
+  for_each               = var.security_groups
+  name                   = each.key
+  vpc_id                 = aws_vpc.this[each.value.vpc_name].id
+  revoke_rules_on_delete = true
+  dynamic "ingress" {
+    for_each = { for k, v in each.value.rules : k => v if v.type == "ingress" }
+    content {
+      description     = lookup(ingress.value, "description", "")
+      protocol        = lookup(ingress.value, "protocol", "-1")
+      from_port       = lookup(ingress.value, "from_port", 0)
+      to_port         = lookup(ingress.value, "to_port", 0)
+      cidr_blocks     = lookup(ingress.value, "cidrs", null)
+      prefix_list_ids = lookup(ingress.value, "prefix_list_ids", null)
+      security_groups = lookup(ingress.value, "security_groups", null)
+      self            = lookup(ingress.value, "self", false)
+    }
+  }
+  dynamic "egress" {
+    for_each = { for k, v in each.value.rules : k => v if v.type == "egress" }
+    content {
+      description     = lookup(egress.value, "description", "")
+      protocol        = lookup(egress.value, "protocol", "-1")
+      from_port       = lookup(egress.value, "from_port", 0)
+      to_port         = lookup(egress.value, "to_port", 0)
+      cidr_blocks     = lookup(egress.value, "cidrs", "0.0.0.0/0")
+      prefix_list_ids = lookup(egress.value, "prefix_list_ids", null)
+      security_groups = lookup(egress.value, "security_groups", null)
+      self            = lookup(egress.value, "self", false)
+    }
+  }
+  tags = merge(
+    {
+      "Name" = each.key
+    },
+    var.tags,
+    each.value["tags"]
+  )
+}

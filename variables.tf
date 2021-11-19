@@ -328,6 +328,7 @@ variable "tgw_vpc_attachments" {
 variable "tgw_route_tables" {
   description = ""
   default = {
+    #TODO - add once vpc's are defined
     tgw-rt-spoke-us-east = {
       transit_gateway_name = "tgw-security-us-east"
       vpc_associations     = []
@@ -384,6 +385,113 @@ variable "vpc_endpoint_service" {
     gwlbe-security-us-east = {
       type   = "gateway"
       target = "gwlb-security-us-east"
+    }
+  }
+}
+
+variable "security_groups" {
+  description = ""
+  default = {
+    sg-security-mgmt-us-east = {
+      vpc_name = "vpc-security-us-east"
+      rules = [
+        {
+          description     = "ICMP - Firewall Management"
+          type            = "ingress"
+          protocol        = "ICMP"
+          cidrs           = ["10.201.0.0/24", "10.201.64.0/24"]
+          security_groups = null
+          prefix_list_ids = null
+          self            = false
+          from_port       = 8
+          to_port         = 8
+        },
+        {
+          description     = "SSH - Firewall Management"
+          type            = "ingress"
+          protocol        = "TCP"
+          cidrs           = ["10.201.0.0/24", "10.201.64.0/24"]
+          security_groups = null
+          prefix_list_ids = null
+          self            = false
+          from_port       = 22
+          to_port         = 22
+        },
+        {
+          description     = "HTTPS - Firewall Management"
+          type            = "ingress"
+          protocol        = "TCP"
+          cidrs           = ["10.201.0.0/24", "10.201.64.0/24"]
+          security_groups = null
+          prefix_list_ids = null
+          self            = false
+          from_port       = 443
+          to_port         = 443
+        },
+        {
+          description     = "All - Firewall Management"
+          type            = "egress"
+          protocol        = "-1"
+          cidrs           = ["0.0.0.0/0"]
+          security_groups = null
+          prefix_list_ids = null
+          self            = false
+          from_port       = 0
+          to_port         = 0
+        },
+      ]
+      tags = {
+        Purpose = "Firewall Management"
+      }
+    }
+    sg-security-private-us-east = {
+      vpc_name = "vpc-security-us-east"
+      rules = [
+        {
+          description     = "All - Firewall Private Interface"
+          type            = "ingress"
+          protocol        = "-1"
+          cidrs           = ["10.201.1.0/24", "10.201.65.0/24"]
+          security_groups = null
+          prefix_list_ids = null
+          self            = false
+          from_port       = 0
+          to_port         = 0
+        },
+        {
+          description     = "All - Firewall Private Interface"
+          type            = "egress"
+          protocol        = "-1"
+          cidrs           = ["0.0.0.0/0"]
+          security_groups = null
+          prefix_list_ids = null
+          self            = false
+          from_port       = 0
+          to_port         = 0
+        },
+      ]
+      tags = {
+        Purpose = "Firewall Private Interface"
+      }
+    }
+    sg-security-public-us-east = {
+      vpc_name = "vpc-security-us-east"
+      rules = [
+        {
+          description     = "All - Firewall Private Interface"
+          type            = "egress"
+          protocol        = "-1"
+          cidrs           = ["0.0.0.0/0"]
+          security_groups = null
+          prefix_list_ids = null
+          self            = false
+          from_port       = 0
+          to_port         = 0
+        },
+      ]
+      tags = {
+        Purpose = "Firewall Public Interface"
+      }
     }
   }
 }
