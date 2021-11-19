@@ -331,8 +331,9 @@ variable "tgw_route_tables" {
     #TODO - add once vpc's are defined
     tgw-rt-spoke-us-east = {
       transit_gateway_name = "tgw-security-us-east"
-      vpc_associations     = []
-      route_propagations   = []
+      vpc_associations     = ["vpc-security-us-east", "vpc-inbound-us-east"]
+      route_propagations   = ["tgw-attach-security-us-east"]
+      routes = ["10.201.3.0/24", "10.201.67.0/24"]
       tgw_route_table_tags = {
         Purpose = "TGW Route Table for Spoke VPC"
       }
@@ -340,7 +341,8 @@ variable "tgw_route_tables" {
     tgw-rt-security-us-east = {
       transit_gateway_name = "tgw-security-us-east"
       vpc_associations     = []
-      route_propagations   = []
+      route_propagations   = ["vpc-security-us-east", "vpc-inbound-us-east", "tgw-attach-security-us-east"]
+      routes = ["10.201.3.0/24", "10.201.67.0/24"]
       tgw_route_table_tags = {
         Purpose = "TGW Route Table for Security VPC"
       }
