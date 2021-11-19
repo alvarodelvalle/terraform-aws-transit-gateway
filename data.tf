@@ -38,6 +38,6 @@ data "aws_internet_gateway" "this" {
   for_each = var.vpcs
   filter {
     name   = "tag:Name"
-    values = [lookup(each.value, ["igw_tags"]["Name"], null)]
+    values = [for x in each.value["igw_tags"] : x]
   }
 }
