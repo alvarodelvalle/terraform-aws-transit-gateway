@@ -501,6 +501,7 @@ variable "elbs" {
           ]
         }
       }
+      listeners = {} #need this ATM because of local.lb_listeners
       tags = {
         Purpose = "Gateway Load Balancer for Security"
       }

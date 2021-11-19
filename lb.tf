@@ -26,6 +26,7 @@ resource "aws_lb" "this" {
 #  }
 #}
 
+# TODO - each.key needs to be the name of the target group and not an index value
 resource "aws_lb_target_group" "ip" {
   for_each    = { for k, v in local.lb_targets : k => v if v.target_type == "ip" }
   name        = each.value.target_key
@@ -47,9 +48,10 @@ resource "aws_lb_target_group" "ip" {
 #  target_id        = ""
 #}
 
+# TODO - each.key needs to be the name of the target group and not an index value
 resource "aws_lb_listener" "this" {
-  for_each = local.lb_listeners
-  load_balancer_arn = aws_lb.this[each.value.lb_key].arn
+  for_each = { for l in local.lb_listeners : l.lb_key => l... } # Two different items produced the key "alb-inbound-app1-us-east" in this 'for' expression. If duplicates are expected, use the ellipsis(...) after the value expression to enable grouping by key.
+  load_balancer_arn = aws_lb.this[each.key].arn
   port              = each.value.port
   protocol          = each.value.protocol
   default_action {
