@@ -515,7 +515,7 @@ variable "elbs" {
         "sn-inbound-alb-app1-us-east-1a",
         "sn-inbound-alb-app1-us-east-1b"
       ]
-      security_groups = ["sg-inbound-public-us-east"]
+      security_groups = ["inbound-public-us-east"]
       targets = {
         alb-target-inbound-app1-us-east = {
           type = "ip"
@@ -540,7 +540,7 @@ variable "elbs" {
       cross-zone      = true
       azs             = ["us-east-1a", "us-east-1b"]
       vpc_name        = "vpc-inbound-us-east"
-      security_groups = ["sg-inbound-public-us-east"]
+      security_groups = ["inbound-public-us-east"]
       subnets = [
         "sn-inbound-alb-app2-us-east-1a",
         "sn-inbound-alb-app2-us-east-1b"
@@ -580,7 +580,7 @@ variable "vpc_endpoint_service" {
 variable "security_groups" {
   description = ""
   default = {
-    sg-security-mgmt-us-east = {
+    security-mgmt-us-east = {
       vpc_name = "vpc-security-us-east"
       rules = [
         {
@@ -632,7 +632,7 @@ variable "security_groups" {
         Purpose = "Firewall Management"
       }
     }
-    sg-security-private-us-east = {
+    security-private-us-east = {
       vpc_name = "vpc-security-us-east"
       rules = [
         {
@@ -662,7 +662,7 @@ variable "security_groups" {
         Purpose = "Firewall Private Interface"
       }
     }
-    sg-security-public-us-east = {
+    security-public-us-east = {
       vpc_name = "vpc-security-us-east"
       rules = [
         {
@@ -681,7 +681,7 @@ variable "security_groups" {
         Purpose = "Firewall Public Interface"
       }
     }
-    sg-inbound-public-us-east = {
+    inbound-public-us-east = {
       vpc_name = "vpc-inbound-us-east"
       rules = [
         {
