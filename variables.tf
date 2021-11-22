@@ -382,16 +382,16 @@ variable "vpc_endpoints" {
   description = ""
   type        = map(any)
   default = {
-    gwlbe-security-us-east-1a = {
-      vpc_name              = "vpc-security-us-east"
-      endpoint_service_name = "com.amazonaws.vpce.us-east-1.vpce-svc-03c15019b985b9d19"
-      endpoint_subnet       = "sn-security-gwlbe-us-east-1a"
-    },
-    gwlbe-security-us-east-1b = {
-      vpc_name              = "vpc-security-us-east"
-      endpoint_service_name = "com.amazonaws.vpce.us-east-1.vpce-svc-03c15019b985b9d19"
-      endpoint_subnet       = "sn-security-gwlbe-us-east-1b"
-    }
+    # gwlbe-security-us-east-1a = {
+    #   vpc_name              = "vpc-security-us-east"
+    #   endpoint_service_name = "com.amazonaws.vpce.us-east-1.vpce-svc-03c15019b985b9d19"
+    #   endpoint_subnet       = "sn-security-gwlbe-us-east-1a"
+    # },
+    # gwlbe-security-us-east-1b = {
+    #   vpc_name              = "vpc-security-us-east"
+    #   endpoint_service_name = "com.amazonaws.vpce.us-east-1.vpce-svc-03c15019b985b9d19"
+    #   endpoint_subnet       = "sn-security-gwlbe-us-east-1b"
+    # }
   }
 }
 
@@ -451,7 +451,7 @@ variable "tgw_route_tables" {
       transit_gateway_name = "tgw-security-us-east"
       vpc_associations     = ["vpc-security-us-east", "vpc-inbound-us-east"]
       route_propagations   = ["tgw-attach-security-us-east"]
-      routes = ["10.201.3.0/24", "10.201.67.0/24"]
+      routes               = ["10.201.3.0/24", "10.201.67.0/24"]
       tgw_route_table_tags = {
         Purpose = "TGW Route Table for Spoke VPC"
       }
@@ -460,7 +460,7 @@ variable "tgw_route_tables" {
       transit_gateway_name = "tgw-security-us-east"
       vpc_associations     = []
       route_propagations   = ["vpc-security-us-east", "vpc-inbound-us-east", "tgw-attach-security-us-east"]
-      routes = ["10.201.3.0/24", "10.201.67.0/24"]
+      routes               = ["10.201.3.0/24", "10.201.67.0/24"]
       tgw_route_table_tags = {
         Purpose = "TGW Route Table for Security VPC"
       }
@@ -469,7 +469,7 @@ variable "tgw_route_tables" {
       transit_gateway_name = "tgw-security-us-east"
       vpc_associations     = ["tgw-attach-inbound-us-east"]
       route_propagations   = ["tgw-attach-inbound-us-east"]
-      routes = []
+      routes               = []
       tgw_route_table_tags = {
         Purpose = "TGW Route Table for Inbound VPC"
       }
@@ -515,7 +515,7 @@ variable "elbs" {
         "sn-inbound-alb-app1-us-east-1a",
         "sn-inbound-alb-app1-us-east-1b"
       ]
-      security_groups = ["sg-inbound-public-us-east"]
+      security_groups = ["inbound-public-us-east"]
       targets = {
         alb-target-inbound-app1-us-east = {
           type = "ip"
@@ -526,8 +526,8 @@ variable "elbs" {
       }
       listeners = {
         http = {
-          protocol = "HTTP"
-          port = "80"
+          protocol     = "HTTP"
+          port         = "80"
           target_group = "alb-target-inbound-app1-us-east"
         }
       }
@@ -536,11 +536,11 @@ variable "elbs" {
       }
     }
     alb-inbound-app2-us-east = {
-      type       = "application"
-      cross-zone = true
-      azs        = ["us-east-1a", "us-east-1b"]
-      vpc_name   = "vpc-inbound-us-east"
-      security_groups = ["sg-inbound-public-us-east"]
+      type            = "application"
+      cross-zone      = true
+      azs             = ["us-east-1a", "us-east-1b"]
+      vpc_name        = "vpc-inbound-us-east"
+      security_groups = ["inbound-public-us-east"]
       subnets = [
         "sn-inbound-alb-app2-us-east-1a",
         "sn-inbound-alb-app2-us-east-1b"
@@ -554,11 +554,11 @@ variable "elbs" {
         }
       }
       listeners = {
-        http = {
-          protocol = "HTTP"
-          port = "80"
-          target_group = "alb-target-inbound-app2-us-east"
-        }
+        # http = {
+        #   protocol     = "HTTP"
+        #   port         = "80"
+        #   target_group = "alb-target-inbound-app2-us-east"
+        # }
       }
       tags = {
         Purpose = "Load Balancer for apps"
@@ -580,7 +580,7 @@ variable "vpc_endpoint_service" {
 variable "security_groups" {
   description = ""
   default = {
-    sg-security-mgmt-us-east = {
+    security-mgmt-us-east = {
       vpc_name = "vpc-security-us-east"
       rules = [
         {
@@ -632,7 +632,7 @@ variable "security_groups" {
         Purpose = "Firewall Management"
       }
     }
-    sg-security-private-us-east = {
+    security-private-us-east = {
       vpc_name = "vpc-security-us-east"
       rules = [
         {
@@ -662,7 +662,7 @@ variable "security_groups" {
         Purpose = "Firewall Private Interface"
       }
     }
-    sg-security-public-us-east = {
+    security-public-us-east = {
       vpc_name = "vpc-security-us-east"
       rules = [
         {
@@ -681,7 +681,7 @@ variable "security_groups" {
         Purpose = "Firewall Public Interface"
       }
     }
-    sg-inbound-public-us-east = {
+    inbound-public-us-east = {
       vpc_name = "vpc-inbound-us-east"
       rules = [
         {
@@ -707,6 +707,8 @@ variable "security_groups" {
           to_port         = 0
         },
       ]
+      tags = {
+      }
     }
   }
 }

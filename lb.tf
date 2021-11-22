@@ -2,16 +2,17 @@ resource "aws_lb" "this" {
   for_each                         = var.elbs
   load_balancer_type               = each.value.type
   name                             = each.key
-  subnets                          = [ for x in each.value.subnets : data.aws_subnets.this[x].ids ][0]
+  subnets                          = [for x in each.value.subnets : data.aws_subnets.this[x].ids[0]]
   enable_cross_zone_load_balancing = lookup(each.value, "cross-zone", null)
   tags = merge(
-  {
-    "Name" = each.key
-  },
-  var.tags,
-  each.value.tags
+    {
+      "Name" = each.key
+    },
+    var.tags,
+    each.value.tags
   )
 }
+
 
 # TODO - maybe use this for firewall instances
 #resource "aws_lb_target_group" "instance" {
@@ -32,9 +33,10 @@ resource "aws_lb_target_group" "ip" {
   name        = each.value.target_key
   target_type = "ip"
   protocol    = "HTTP"
+  port        = "80"
   vpc_id      = aws_vpc.this[each.value.vpc_name].id
   health_check {
-    path = "/"
+    path    = "/"
     matcher = "200-499"
   }
 }
@@ -48,14 +50,19 @@ resource "aws_lb_target_group" "ip" {
 #  target_id        = ""
 #}
 
+
+locals {
+  tagert_groups_arns = { for g in aws_lb_target_group.ip : g.name => g.arn }
+}
+
 # TODO - each.key needs to be the name of the target group and not an index value
 resource "aws_lb_listener" "this" {
-  for_each = { for l in local.lb_listeners : l.lb_key => l... } # Two different items produced the key "alb-inbound-app1-us-east" in this 'for' expression. If duplicates are expected, use the ellipsis(...) after the value expression to enable grouping by key.
+  for_each          = { for l in local.lb_listeners : l.lb_key => l... } # Two different items produced the key "alb-inbound-app1-us-east" in this 'for' expression. If duplicates are expected, use the ellipsis(...) after the value expression to enable grouping by key.
   load_balancer_arn = aws_lb.this[each.key].arn
-  port              = each.value.port
-  protocol          = each.value.protocol
+  port              = each.value[0].port
+  protocol          = each.value[0].protocol
   default_action {
     type             = "forward"
-    target_group_arn = aws_lb_target_group.ip[each.value.target_group].arn
+    target_group_arn = local.tagert_groups_arns[each.value[0].target_group]
   }
 }

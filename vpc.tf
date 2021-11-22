@@ -64,13 +64,13 @@ resource "aws_route_table" "this" {
     var.tags
   )
   dynamic "route" {
-    for_each = each.value.routes
+    for_each = {} #each.value.routes
     content {
       cidr_block         = route.value["route_cidr_destination"]
       transit_gateway_id = lookup(route.value, "transit_gateway_name", null) != null ? aws_ec2_transit_gateway.this[route.value["transit_gateway_name"]].id : null
       // IGW
-      gateway_id      = lookup(route.value, "gateway_name", null) != null ? data.aws_internet_gateway.this[each.value["vpc_name"]].id : null
-      vpc_endpoint_id = lookup(route.value, "vpc_endpoint_name", null) != null ? aws_vpc_endpoint.this[route.value["vpc_endpoint_name"]].id : null
+      gateway_id = lookup(route.value, "gateway_name", null) != null ? data.aws_internet_gateway.this[each.value["vpc_name"]].id : null
+      # vpc_endpoint_id = lookup(route.value, "vpc_endpoint_name", null) != null ? aws_vpc_endpoint.this[route.value["vpc_endpoint_name"]].id : null
     }
   }
 }
@@ -93,14 +93,14 @@ resource "aws_vpc_endpoint_subnet_association" "this" {
   for_each        = var.vpc_endpoints
   subnet_id       = data.aws_subnets.this[each.value.endpoint_subnet].ids[0]
   vpc_endpoint_id = aws_vpc_endpoint.this[each.key].id
-  depends_on = [aws_subnet.private, aws_subnet.public]
+  depends_on      = [aws_subnet.private, aws_subnet.public]
 }
 
-resource "aws_vpc_endpoint_service" "this" {
-  for_each                   = { for k, v in var.vpc_endpoint_service : k => v if v.type == "gateway" }
-  acceptance_required        = false
-  gateway_load_balancer_arns = [aws_lb.this[each.value.target].arn]
-}
+# resource "aws_vpc_endpoint_service" "this" {
+#   for_each                   = { for k, v in var.vpc_endpoint_service : k => v if v.type == "gateway" }
+#   acceptance_required        = false
+#   gateway_load_balancer_arns = [aws_lb.this[each.value.target].arn]
+# }
 
 resource "aws_security_group" "this" {
   for_each               = var.security_groups

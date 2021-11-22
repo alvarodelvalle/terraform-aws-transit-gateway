@@ -1,11 +1,11 @@
-data "aws_vpc" "this" {
-  for_each = var.vpcs
-  filter {
-    name   = "tag:Name"
-    values = [each.key]
-  }
-  depends_on = [aws_vpc.this]
-}
+# data "aws_vpc" "this" {
+#   for_each = var.vpcs
+#   filter {
+#     name   = "tag:Name"
+#     values = [each.key]
+#   }
+#   depends_on = [aws_vpc.this]
+# }
 
 data "aws_route_table" "this" {
   for_each = var.vpc_route_tables
