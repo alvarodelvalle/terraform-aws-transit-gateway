@@ -20,7 +20,7 @@ resource "aws_ec2_transit_gateway_vpc_attachment" "this" {
   for_each                                        = var.tgw_vpc_attachments
   transit_gateway_id                              = aws_ec2_transit_gateway.this[each.value.tgw_name].id
   vpc_id                                          = aws_vpc.this[each.value.vpc_name].id
-  subnet_ids                                      = [for x in each.value.subnets : data.aws_subnets.this[x].ids][0]
+  subnet_ids                                      = [for x in each.value.subnets : data.aws_subnets.this[x].ids[0]]
   dns_support                                     = lookup(each.value, "dns_support", true) ? "enable" : "disable"
   ipv6_support                                    = lookup(each.value, "ipv6_support", false) ? "enable" : "disable"
   appliance_mode_support                          = lookup(each.value, "appliance_mode_support", true) ? "enable" : "disable"
@@ -28,7 +28,7 @@ resource "aws_ec2_transit_gateway_vpc_attachment" "this" {
   transit_gateway_default_route_table_propagation = lookup(each.value, "transit_gateway_default_route_table_propagation", false)
   tags = merge(
     {
-      Name = format("%s-%s", var.name, each.key)
+      Name = join("-", compact([var.name, each.key]))
     },
     var.tags,
     var.tgw_vpc_attachment_tags,
