@@ -55,26 +55,35 @@ locals {
       for i, r in v.routes : {
         route                          = r
         transit_gateway_route_table_id = k
-        vpc_association                = v.vpc_associations[i]
+        vpc_associations               = v.vpc_associations[i]
       }
     ] if length(v.routes) == length(v.vpc_associations)
   ])
+
+  tgw_vpc_attachments = flatten([
+    for k, v in var.tgw_route_tables : [
+      for i, r in v.vpc_associations : {
+        transit_gateway_route_table_id = k
+        vpc_associations               = r
+      }
+    ]
+  ])
 }
 
-resource "aws_ec2_transit_gateway_route" "this" {
-  count = length(local.tgw_routes)
+# resource "aws_ec2_transit_gateway_route" "this" {
+#   count = length(local.tgw_routes)
 
-  destination_cidr_block = local.tgw_routes[count.index].route
-  # blackhole                      = lookup(local.vpc_attachments_with_routes[count.index][1], "blackhole", null)
-  transit_gateway_attachment_id  =aws_ec2_transit_gateway_vpc_attachment.this[local.tgw_routes[count.index].vpc_association].id
-  transit_gateway_route_table_id = aws_ec2_transit_gateway_route_table.this[local.tgw_routes[count.index].transit_gateway_route_table_id].id
-}
+#   destination_cidr_block = local.tgw_routes[count.index].route
+#   # blackhole                      = lookup(local.vpc_attachments_with_routes[count.index][1], "blackhole", null)
+#   transit_gateway_attachment_id  =aws_ec2_transit_gateway_vpc_attachment.this[local.tgw_routes[count.index].vpc_association].id
+#   transit_gateway_route_table_id = aws_ec2_transit_gateway_route_table.this[local.tgw_routes[count.index].transit_gateway_route_table_id].id
+# }
 
 # resource "aws_ec2_transit_gateway_route_table_association" "this" {
-#   for_each = local.vpc_attachments_without_default_route_table_association
+#   for_each = var.tgw_vpc_attachments
 #   # Create association if it was not set already by aws_ec2_transit_gateway_vpc_attachment resource
-#   transit_gateway_attachment_id  = aws_ec2_transit_gateway_vpc_attachment.this[each.key].id
-#   transit_gateway_route_table_id = coalesce(lookup(each.value, "transit_gateway_route_table_id", null), var.transit_gateway_route_table_id, aws_ec2_transit_gateway_route_table.this[0].id)
+#   transit_gateway_attachment_id  = aws_ec2_transit_gateway_vpc_attachment.this[each.value.vpc_associations].id
+#   transit_gateway_route_table_id = aws_ec2_transit_gateway_route_table.this[each.value.transit_gateway_route_table_id].id
 # }
 
 # resource "aws_ec2_transit_gateway_route_table_propagation" "this" {
