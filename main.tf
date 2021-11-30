@@ -115,3 +115,5 @@ resource "aws_ec2_transit_gateway_route_table" "this" {
 #
 #  share_arn = var.ram_resource_share_arn
 #}
+
+#TODO - find out how to attache eni's to instances in different subnets - is this possible?

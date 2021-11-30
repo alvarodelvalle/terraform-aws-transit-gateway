@@ -85,8 +85,14 @@ resource "aws_route_table_association" "subnets" {
 resource "aws_vpc_endpoint" "this" {
   for_each     = var.vpc_endpoints
   auto_accept  = true
-  service_name = lookup(each.value, "endpoint_service_name", null)
+  service_name = aws_vpc_endpoint_service.this[each.value].service_name
   vpc_id       = aws_vpc.this[each.value.vpc_name].id
+}
+
+#TODO - Create the service endpoints
+resource "aws_vpc_endpoint_service" "this" {
+  acceptance_required = false
+  private_dns_name = ""
 }
 
 resource "aws_vpc_endpoint_subnet_association" "this" {
