@@ -93,7 +93,7 @@ resource "aws_vpc_endpoint_subnet_association" "this" {
   for_each        = var.vpc_endpoints
   subnet_id       = data.aws_subnets.this[each.value.endpoint_subnet].ids[0]
   vpc_endpoint_id = aws_vpc_endpoint.this[each.key].id
-  depends_on = [aws_subnet.private, aws_subnet.public]
+  depends_on      = [aws_subnet.private, aws_subnet.public]
 }
 
 resource "aws_vpc_endpoint_service" "this" {

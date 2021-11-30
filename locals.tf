@@ -14,11 +14,11 @@ locals {
   lb_listeners = flatten([
     for lb_key, lb in var.elbs : [
       for listener_key, listeners in lb.listeners : {
-        lb_key      = lb_key
-        port = listeners.port
-        protocol = listeners.protocol
+        lb_key       = lb_key
+        port         = listeners.port
+        protocol     = listeners.protocol
         target_group = listeners.target_group
-        vpc_name    = lb.vpc_name
+        vpc_name     = lb.vpc_name
       }
     ]
   ])
