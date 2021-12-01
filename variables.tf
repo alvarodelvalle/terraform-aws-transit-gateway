@@ -120,7 +120,7 @@ variable "private_subnets" {
     },
     sn-security-tgw-us-east-1b = {
       vpc_name                = "vpc-security-us-east"
-      availability_zone       = "us-east-1a"
+      availability_zone       = "us-east-1b"
       cidr_block              = "10.201.67.0/24"
       map_public_ip_on_launch = false
       tags = {
@@ -401,7 +401,7 @@ variable "tgws" {
   default = {
     tgw-security-us-east = {
       description                     = "Willdan Group East TGW"
-      amazon_side_asn                 = 64512
+      amazon_side_asn                 = 64513
       default_route_table_association = "disable"
       default_route_table_propagation = "disable"
       auto_accept_shared_attachments  = "disable"
@@ -449,17 +449,18 @@ variable "tgw_route_tables" {
     #TODO - add more context and tf resources in main.tf once vpc's are defined
     tgw-rt-spoke-us-east = {
       transit_gateway_name = "tgw-security-us-east"
-      vpc_associations     = ["vpc-security-us-east", "vpc-inbound-us-east"]
-      route_propagations   = ["tgw-attach-security-us-east"]
-      routes               = ["10.201.3.0/24", "10.201.67.0/24"]
+      # vpc_associations     = ["vpc-security-us-east", "vpc-inbound-us-east"]
+      vpc_associations   = []
+      route_propagations = ["tgw-attach-security-us-east"]
+      routes             = ["10.201.3.0/24", "10.201.67.0/24"]
       tgw_route_table_tags = {
         Purpose = "TGW Route Table for Spoke VPC"
       }
     }
     tgw-rt-security-us-east = {
       transit_gateway_name = "tgw-security-us-east"
-      vpc_associations     = []
-      route_propagations   = ["vpc-security-us-east", "vpc-inbound-us-east", "tgw-attach-security-us-east"]
+      vpc_associations     = ["tgw-attach-security-us-east"]
+      route_propagations   = ["tgw-attach-security-us-east"]
       routes               = ["10.201.3.0/24", "10.201.67.0/24"]
       tgw_route_table_tags = {
         Purpose = "TGW Route Table for Security VPC"
@@ -515,7 +516,7 @@ variable "elbs" {
         "sn-inbound-alb-app1-us-east-1a",
         "sn-inbound-alb-app1-us-east-1b"
       ]
-      security_groups = ["sg-inbound-public-us-east"]
+      security_groups = ["inbound-public-us-east"]
       targets = {
         alb-target-inbound-app1-us-east = {
           type = "ip"
@@ -540,7 +541,7 @@ variable "elbs" {
       cross-zone      = true
       azs             = ["us-east-1a", "us-east-1b"]
       vpc_name        = "vpc-inbound-us-east"
-      security_groups = ["sg-inbound-public-us-east"]
+      security_groups = ["inbound-public-us-east"]
       subnets = [
         "sn-inbound-alb-app2-us-east-1a",
         "sn-inbound-alb-app2-us-east-1b"
@@ -580,7 +581,7 @@ variable "vpc_endpoint_service" {
 variable "security_groups" {
   description = ""
   default = {
-    sg-security-mgmt-us-east = {
+    security-mgmt-us-east = {
       vpc_name = "vpc-security-us-east"
       rules = [
         {
@@ -632,7 +633,7 @@ variable "security_groups" {
         Purpose = "Firewall Management"
       }
     }
-    sg-security-private-us-east = {
+    security-private-us-east = {
       vpc_name = "vpc-security-us-east"
       rules = [
         {
@@ -662,7 +663,7 @@ variable "security_groups" {
         Purpose = "Firewall Private Interface"
       }
     }
-    sg-security-public-us-east = {
+    security-public-us-east = {
       vpc_name = "vpc-security-us-east"
       rules = [
         {
@@ -681,7 +682,7 @@ variable "security_groups" {
         Purpose = "Firewall Public Interface"
       }
     }
-    sg-inbound-public-us-east = {
+    inbound-public-us-east = {
       vpc_name = "vpc-inbound-us-east"
       rules = [
         {

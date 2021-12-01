@@ -2,7 +2,7 @@ resource "aws_lb" "this" {
   for_each                         = var.elbs
   load_balancer_type               = each.value.type
   name                             = each.key
-  subnets                          = [for x in each.value.subnets : data.aws_subnets.this[x].ids][0]
+  subnets                          = [for x in each.value.subnets : data.aws_subnets.this[x].ids[0]]
   enable_cross_zone_load_balancing = lookup(each.value, "cross-zone", null)
   tags = merge(
     {
@@ -31,6 +31,7 @@ resource "aws_lb_target_group" "ip" {
   name        = each.value.target_key
   target_type = "ip"
   protocol    = "HTTP"
+  port        = "80"
   vpc_id      = aws_vpc.this[each.value.vpc_name].id
   health_check {
     path    = "/"
@@ -50,8 +51,8 @@ resource "aws_lb_target_group" "ip" {
 resource "aws_lb_listener" "this" {
   for_each          = { for l in local.lb_listeners : "${l.lb_key}:${l.port}" => l }
   load_balancer_arn = aws_lb.this[split(":", each.key)[0]].arn
-  port              = each.value.port
-  protocol          = each.value.protocol
+  port              = each.value[0].port
+  protocol          = each.value[0].protocol
   default_action {
     type             = "forward"
     target_group_arn = aws_lb_target_group.ip[each.value.target_group].arn
