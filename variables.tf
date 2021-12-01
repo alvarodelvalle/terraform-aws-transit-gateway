@@ -460,9 +460,8 @@ variable "tgw_route_tables" {
     tgw-rt-security-us-east = {
       transit_gateway_name = "tgw-security-us-east"
       vpc_associations     = ["tgw-attach-security-us-east"]
-      route_propagations   = ["vpc-security-us-east", "vpc-inbound-us-east", "tgw-attach-security-us-east"]
-      # routes               = ["10.201.3.0/24", "10.201.67.0/24"]
-      routes = ["10.201.3.0/24"]
+      route_propagations   = ["tgw-attach-security-us-east"]
+      routes               = ["10.201.3.0/24", "10.201.67.0/24"]
       tgw_route_table_tags = {
         Purpose = "TGW Route Table for Security VPC"
       }
