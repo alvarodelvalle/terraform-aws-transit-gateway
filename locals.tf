@@ -7,6 +7,9 @@ locals {
         target_key  = t_key
         target_type = t.type
         targets     = t.targets
+        target_hc_path = t.health_check_path
+        target_hc_port = t.health_check_port
+        target_hc_protocol = t.health_check_protocol
         vpc_name    = lb.vpc_name
       }
     ]

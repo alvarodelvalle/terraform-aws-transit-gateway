@@ -34,7 +34,9 @@ resource "aws_lb_target_group" "ip" {
   port        = "80"
   vpc_id      = aws_vpc.this[each.value.vpc_name].id
   health_check {
-    path    = "/"
+    path    = each.value.target_hc_path
+    port = each.value.target_hc_port
+    protocol = each.value.target_hc_protocol
     matcher = "200-499"
   }
 }

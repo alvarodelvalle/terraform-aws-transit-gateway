@@ -598,6 +598,9 @@ variable "elbs" {
             "10.201.1.10",
             "10.201.64.10"
           ]
+          health_check_path = "/php/login.php"
+          health_check_port = 443
+          health_check_protocol = "HTTPS"
         }
       }
       listeners = {} #need this ATM because of local.lb_listeners
@@ -621,6 +624,9 @@ variable "elbs" {
           targets = [
             #TODO - IP Addresses of application servers and ports
           ]
+          health_check_path = "/"
+          health_check_port = 80
+          health_check_protocol = "HTTP"
         }
       }
       listeners = {
@@ -650,6 +656,9 @@ variable "elbs" {
           targets = [
             #TODO - IP Addresses of application servers and ports
           ]
+          health_check_path = "/"
+          health_check_port = 80
+          health_check_protocol = "HTTP"
         }
       }
       listeners = {
