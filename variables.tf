@@ -293,7 +293,7 @@ variable "vpc_route_tables" {
           route_subnets_association = ["sn-security-mgmt-us-east-1a", "sn-security-mgmt-us-east-1b"]
         }
       ]
-    },
+    }
     rt-security-public-us-east = {
       vpc_name = "vpc-security-us-east"
       routes = [
@@ -303,11 +303,11 @@ variable "vpc_route_tables" {
           route_subnets_association = ["sn-security-public-us-east-1a", "sn-security-public-us-east-1b"]
         }
       ]
-    },
+    }
     rt-security-private-us-east = {
       vpc_name = "vpc-security-us-east"
       routes   = []
-    },
+    }
     rt-security-tgw-us-east-1a = {
       vpc_name = "vpc-security-us-east"
       routes = [
@@ -317,7 +317,7 @@ variable "vpc_route_tables" {
           route_subnets_association = ["sn-security-tgw-us-east-1a"]
         }
       ]
-    },
+    }
     rt-security-tgw-us-east-1b = {
       vpc_name = "vpc-security-us-east"
       routes = [
@@ -327,7 +327,7 @@ variable "vpc_route_tables" {
           route_subnets_association = ["sn-security-tgw-us-east-1b"]
         }
       ]
-    },
+    }
     rt-security-gwlbe-us-east = {
       vpc_name = "vpc-security-us-east"
       routes = [
@@ -337,8 +337,7 @@ variable "vpc_route_tables" {
           route_subnets_association = ["sn-security-gwlbe-us-east-1a", "sn-security-gwlbe-us-east-1b"]
         }
       ]
-    },
-
+    }
   }
 }
 
@@ -347,31 +346,31 @@ variable "route_table_subnet_associations" {
   default = {
     rt-security-mgmt-us-east = {
       route_subnet_association = "sn-security-mgmt-us-east-1a"
-    },
+    }
     rt-security-mgmt-us-east = {
       route_subnet_association = "sn-security-mgmt-us-east-1b"
-    },
+    }
     rt-security-public-us-east = {
       route_subnet_association = "sn-security-public-us-east-1a"
-    },
+    }
     rt-security-public-us-east = {
       route_subnet_association = "sn-security-public-us-east-1b"
-    },
+    }
     rt-security-private-us-east = {
       route_subnet_association = "sn-security-private-us-east-1a"
-    },
+    }
     rt-security-private-us-east = {
       route_subnet_association = "sn-security-private-us-east-1b"
-    },
+    }
     rt-security-tgw-us-east-1a = {
       route_subnet_association = "sn-security-tgw-us-east-1a"
-    },
+    }
     rt-security-tgw-us-east-1b = {
       route_subnet_association = "sn-security-tgw-us-east-1b"
-    },
+    }
     rt-security-gwlbe-us-east = {
       route_subnet_association = "sn-security-gwlbe-us-east-1a"
-    },
+    }
     rt-security-gwlbe-us-east = {
       route_subnet_association = "sn-security-gwlbe-us-east-1b"
     }
@@ -380,17 +379,37 @@ variable "route_table_subnet_associations" {
 
 variable "vpc_endpoints" {
   description = ""
-  type        = map(any)
+  type        = any
   default = {
     gwlbe-security-us-east-1a = {
       vpc_name              = "vpc-security-us-east"
-      endpoint_service_name = "com.amazonaws.vpce.us-east-1.vpce-svc-03c15019b985b9d19"
-      endpoint_subnet       = "sn-security-gwlbe-us-east-1a"
-    },
+      endpoint_service_name = "gwlbe-security-us-east"
+      endpoint_subnets      = ["sn-security-gwlbe-us-east-1a"]
+    }
     gwlbe-security-us-east-1b = {
       vpc_name              = "vpc-security-us-east"
-      endpoint_service_name = "com.amazonaws.vpce.us-east-1.vpce-svc-03c15019b985b9d19"
-      endpoint_subnet       = "sn-security-gwlbe-us-east-1b"
+      endpoint_service_name = "gwlbe-security-us-east"
+      endpoint_subnets      = ["sn-security-gwlbe-us-east-1b"]
+    }
+    gwlbe-inbound-app1-us-east-1a = {
+      vpc_name              = "vpc-inbound-us-east"
+      endpoint_service_name = "gwlbe-security-us-east"
+      endpoint_subnets      = ["sn-inbound-gwlbe-app1-us-east-1a"]
+    }
+    gwlbe-inbound-app1-us-east-1b = {
+      vpc_name              = "vpc-inbound-us-east"
+      endpoint_service_name = "gwlbe-security-us-east"
+      endpoint_subnets      = ["sn-inbound-gwlbe-app1-us-east-1b"]
+    }
+    gwlbe-inbound-app2-us-east-1a = {
+      vpc_name              = "vpc-inbound-us-east"
+      endpoint_service_name = "gwlbe-security-us-east"
+      endpoint_subnets      = ["sn-inbound-gwlbe-app2-us-east-1a"]
+    }
+    gwlbe-inbound-app2-us-east-1b = {
+      vpc_name              = "vpc-inbound-us-east"
+      endpoint_service_name = "gwlbe-security-us-east"
+      endpoint_subnets      = ["sn-inbound-gwlbe-app2-us-east-1b"]
     }
   }
 }
