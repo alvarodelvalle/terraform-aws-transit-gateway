@@ -68,7 +68,7 @@ resource "aws_route_table" "this" {
     content {
       cidr_block         = route.value["route_cidr_destination"]
       transit_gateway_id = lookup(route.value, "transit_gateway_name", null) != null ? aws_ec2_transit_gateway.this[route.value["transit_gateway_name"]].id : null
-      // IGW
+      # TODO - gateway can be an IGW or Virtual Private Gateway. Handling IGW only for now.
       gateway_id      = lookup(route.value, "gateway_name", null) != null ? data.aws_internet_gateway.this[each.value["vpc_name"]].id : null
       vpc_endpoint_id = lookup(route.value, "vpc_endpoint_name", null) != null ? aws_vpc_endpoint.this[route.value["vpc_endpoint_name"]].id : null
     }
@@ -76,9 +76,9 @@ resource "aws_route_table" "this" {
 }
 
 resource "aws_route_table_association" "subnets" {
-  for_each       = var.route_table_subnet_associations
-  route_table_id = aws_route_table.this[each.key].id
-  subnet_id      = data.aws_subnets.this[each.value.route_subnet_association].ids[0]
+  for_each       = toset(var.rt_subnet_associations_list)
+  route_table_id = aws_route_table.this[split(":", each.value)[0]].id
+  subnet_id      = data.aws_subnets.this[split(":", each.value)[1]].ids[0]
   depends_on     = [aws_subnet.public, aws_subnet.private]
 }
 
@@ -93,7 +93,7 @@ resource "aws_vpc_endpoint" "this" {
 
 resource "aws_vpc_endpoint_service" "this" {
   for_each                   = { for k, v in var.vpc_endpoint_service : k => v if v.type == "gateway" }
-  acceptance_required        = true
+  acceptance_required        = false
   gateway_load_balancer_arns = [aws_lb.this[each.value.target].arn]
 }
 

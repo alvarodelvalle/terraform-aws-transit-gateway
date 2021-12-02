@@ -290,7 +290,6 @@ variable "vpc_route_tables" {
         {
           route_cidr_destination    = "0.0.0.0/0"
           transit_gateway_name      = "tgw-security-us-east"
-          route_subnets_association = ["sn-security-mgmt-us-east-1a", "sn-security-mgmt-us-east-1b"]
         }
       ]
     }
@@ -300,7 +299,6 @@ variable "vpc_route_tables" {
         {
           route_cidr_destination    = "0.0.0.0/0"
           gateway_name              = "igw-security-us-east"
-          route_subnets_association = ["sn-security-public-us-east-1a", "sn-security-public-us-east-1b"]
         }
       ]
     }
@@ -314,7 +312,6 @@ variable "vpc_route_tables" {
         {
           route_cidr_destination    = "0.0.0.0/0"
           vpc_endpoint_name         = "gwlbe-security-us-east-1a"
-          route_subnets_association = ["sn-security-tgw-us-east-1a"]
         }
       ]
     }
@@ -324,7 +321,6 @@ variable "vpc_route_tables" {
         {
           route_cidr_destination    = "0.0.0.0/0"
           vpc_endpoint_name         = "gwlbe-security-us-east-1b"
-          route_subnets_association = ["sn-security-tgw-us-east-1b"]
         }
       ]
     }
@@ -334,47 +330,114 @@ variable "vpc_route_tables" {
         {
           route_cidr_destination    = "0.0.0.0/0"
           transit_gateway_name      = "tgw-security-us-east"
-          route_subnets_association = ["sn-security-gwlbe-us-east-1a", "sn-security-gwlbe-us-east-1b"]
         }
+      ]
+    }
+    rt-inbound-public-us-east = {
+      vpc_name = "vpc-inbound-us-east"
+      routes = [
+        {
+          route_cidr_destination    = "10.200.1.0/24"
+          vpc_endpoint_name      = "gwlbe-inbound-app1-us-east-1a"
+        },
+        {
+          route_cidr_destination = "10.200.65.0/24"
+          vpc_endpoint_name = "gwlbe-inbound-app1-us-east-1b"
+        },
+        {
+          route_cidr_destination = "10.200.3.0/24"
+          vpc_endpoint_name = "gwlbe-inbound-app2-us-east-1a"
+        },
+        {
+          route_cidr_destination = "10.200.67.0/24"
+          vpc_endpoint_name = "gwlbe-inbound-app2-us-east-1b"
+        }
+      ]
+    }
+    rt-inbound-gwlbe-us-east = {
+      vpc_name = "vpc-inbound-us-east"
+      routes = [
+        {
+          route_cidr_destination    = "0.0.0.0/0"
+          gateway_name      = "igw-inbound-us-east"
+          vpc_name = "vpc-inbound-us-east"
+        }
+      ]
+    }
+    rt-inbound-alb-app1-us-east-1a = {
+      vpc_name = "vpc-inbound-us-east"
+      routes = [
+        {
+          route_cidr_destination    = "0.0.0.0/0"
+          vpc_endpoint_name      = "gwlbe-inbound-app1-us-east-1a"
+        },
+#        TODO - add application subnet cidr once app vpc are created
+#        {
+#          route_cidr_destination    = ""
+#          transit_gateway_name      = "tgw-security-us-east"
+#        }
+      ]
+    }
+    rt-inbound-alb-app1-us-east-1b = {
+      vpc_name = "vpc-inbound-us-east"
+      routes = [
+        {
+          route_cidr_destination    = "0.0.0.0/0"
+          vpc_endpoint_name      = "gwlbe-inbound-app1-us-east-1a"
+        },
+#        TODO - add application subnet cidr once app vpc are created
+#        {
+#          route_cidr_destination    = ""
+#          transit_gateway_name      = "tgw-security-us-east"
+#        }
+      ]
+    }
+    rt-inbound-alb-app2-us-east-1a = {
+      vpc_name = "vpc-inbound-us-east"
+      routes = [
+        {
+          route_cidr_destination    = "0.0.0.0/0"
+          vpc_endpoint_name      = "gwlbe-inbound-app2-us-east-1a"
+        },
+#        TODO - add application subnet cidr once app vpc are created
+#        {
+#          route_cidr_destination    = ""
+#          transit_gateway_name      = "tgw-security-us-east"
+#        }
+      ]
+    }
+    rt-inbound-alb-app2-us-east-1b = {
+      vpc_name = "vpc-inbound-us-east"
+      routes = [
+        {
+          route_cidr_destination    = "0.0.0.0/0"
+          vpc_endpoint_name      = "gwlbe-inbound-app2-us-east-1a"
+        },
+#        TODO - add application subnet cidr once app vpc are created
+#        {
+#          route_cidr_destination    = ""
+#          transit_gateway_name      = "tgw-security-us-east"
+#        }
       ]
     }
   }
 }
 
-variable "route_table_subnet_associations" {
-  description = ""
-  default = {
-    rt-security-mgmt-us-east = {
-      route_subnet_association = "sn-security-mgmt-us-east-1a"
-    }
-    rt-security-mgmt-us-east = {
-      route_subnet_association = "sn-security-mgmt-us-east-1b"
-    }
-    rt-security-public-us-east = {
-      route_subnet_association = "sn-security-public-us-east-1a"
-    }
-    rt-security-public-us-east = {
-      route_subnet_association = "sn-security-public-us-east-1b"
-    }
-    rt-security-private-us-east = {
-      route_subnet_association = "sn-security-private-us-east-1a"
-    }
-    rt-security-private-us-east = {
-      route_subnet_association = "sn-security-private-us-east-1b"
-    }
-    rt-security-tgw-us-east-1a = {
-      route_subnet_association = "sn-security-tgw-us-east-1a"
-    }
-    rt-security-tgw-us-east-1b = {
-      route_subnet_association = "sn-security-tgw-us-east-1b"
-    }
-    rt-security-gwlbe-us-east = {
-      route_subnet_association = "sn-security-gwlbe-us-east-1a"
-    }
-    rt-security-gwlbe-us-east = {
-      route_subnet_association = "sn-security-gwlbe-us-east-1b"
-    }
-  }
+variable "rt_subnet_associations_list" {
+  description = "Route table to subnet association"
+  type = list(string)
+  default = [
+    "rt-security-mgmt-us-east:sn-security-mgmt-us-east-1a",
+    "rt-security-mgmt-us-east:sn-security-mgmt-us-east-1b",
+    "rt-security-public-us-east:sn-security-public-us-east-1a",
+    "rt-security-public-us-east:sn-security-public-us-east-1b",
+    "rt-security-private-us-east:sn-security-private-us-east-1a",
+    "rt-security-private-us-east:sn-security-private-us-east-1b",
+    "rt-security-tgw-us-east-1a:sn-security-tgw-us-east-1a",
+    "rt-security-tgw-us-east-1b:sn-security-tgw-us-east-1b",
+    "rt-security-gwlbe-us-east:sn-security-gwlbe-us-east-1a",
+    "rt-security-gwlbe-us-east:sn-security-gwlbe-us-east-1b",
+  ]
 }
 
 variable "vpc_endpoints" {
