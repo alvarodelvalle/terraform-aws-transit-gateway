@@ -8,6 +8,12 @@ variable "tags" {
   }
 }
 
+variable "name" {
+  description = "Name to be used on all the resources as identifier"
+  type        = string
+  default     = ""
+}
+
 variable "vpcs" {
   description = "VPC's defined as a map"
   type        = any
@@ -526,6 +532,7 @@ variable "tgw_vpc_attachments" {
       appliance_mode_support                          = true
       transit_gateway_default_route_table_association = false
       transit_gateway_default_route_table_propagation = false
+      tags                                            = {}
     }
     tgw-attach-inbound-us-east = {
       vpc_name                                        = "vpc-inbound-us-east"
@@ -537,6 +544,7 @@ variable "tgw_vpc_attachments" {
       appliance_mode_support                          = true
       transit_gateway_default_route_table_association = false
       transit_gateway_default_route_table_propagation = false
+      tags                                            = {}
     }
   }
 }
@@ -845,20 +853,83 @@ variable "security_groups" {
   }
 }
 
-variable "create_tgw" {
-  description = "Controls if TGW should be created (it affects almost all resources)"
-  type        = bool
-  default     = true
-}
-
-variable "name" {
-  description = "Name to be used on all the resources as identifier"
-  type        = string
-  default     = ""
-}
-
-variable "tgw_vpc_attachment_tags" {
-  description = "Additional tags for VPC attachments"
-  type        = map(string)
-  default     = null
+variable "instances" {
+  description = ""
+  type = any
+  default = {
+    panfw-security-us-east-1a = {
+      instance_type = "m5.xlarge"
+      subnet = "sn-security-mgmt-us-east-1a"
+      network_interfaces = {
+        eni-panfw-us-east-1a-mgmt = {
+          index = 0
+          subnet         = "sn-security-mgmt-us-east-1a"
+          ips            = ["10.201.0.10"]
+          security_groups = ["security-mgmt-us-east"]
+          src_dst_check  = false
+          tags = {
+            Purpose = "Firewall Management"
+          }
+        }
+        eni-panfw-us-east-1a-private = {
+          index = 1
+          subnet         = "sn-security-private-us-east-1a"
+          ips            = ["10.201.1.10"]
+          security_groups = ["security-mgmt-us-east"]
+          src_dst_check  = false
+          tags = {
+            Purpose = "Firewall Private Interface"
+          }
+        }
+        eni-panfw-us-east-1a-public = {
+          index = 2
+          subnet         = "sn-security-public-us-east-1a"
+          ips            = ["10.201.2.10"]
+          security_groups = ["security-mgmt-us-east"]
+          src_dst_check  = false
+          tags = {
+            Purpose = "Firewall Public Interface"
+          }
+        }
+      }
+      security_groups = ["sg-security-mgmt-us-east"]
+    }
+    panfw-security-us-east-1b = {
+      instance_type = "m5.xlarge"
+      subnet = "sn-security-mgmt-us-east-1b"
+      network_interfaces = {
+        eni-panfw-us-east-1b-mgmt = {
+          index = 0
+          subnet         = "sn-security-mgmt-us-east-1b"
+          ips            = ["10.201.64.10"]
+          security_groups = ["security-mgmt-us-east"]
+          src_dst_check  = false
+          tags = {
+            Purpose = "Firewall Management"
+          }
+        }
+        eni-panfw-us-east-1b-private = {
+          index = 1
+          subnet         = "sn-security-private-us-east-1b"
+          ips            = ["10.201.65.10"]
+          security_groups = ["security-mgmt-us-east"]
+          src_dst_check  = false
+          tags = {
+            Purpose = "Firewall Private Interface"
+          }
+        }
+        eni-panfw-us-east-1b-public = {
+          index = 2
+          subnet         = "sn-security-public-us-east-1b"
+          ips            = ["10.201.66.10"]
+          security_groups = ["security-mgmt-us-east"]
+          src_dst_check  = false
+          tags = {
+            Purpose = "Firewall Public Interface"
+          }
+        }
+      }
+      security_groups = ["sg-security-mgmt-us-east"]
+    }
+  }
 }

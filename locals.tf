@@ -54,4 +54,16 @@ locals {
       }
     ]
   ])
+  instance_enis = flatten([
+    for i_key, i in var.instances : [
+      for eni_key, eni_val in i.network_interfaces : {
+        eni_name        = eni_key
+        subnet          = eni_val.subnet
+        ips             = eni_val.ips
+        security_groups = eni_val.security_groups
+        src_dst_check   = eni_val.src_dst_check
+        tags            = eni_val.tags
+      }
+    ]
+  ])
 }

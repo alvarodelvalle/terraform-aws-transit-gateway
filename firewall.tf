@@ -1,1 +1,31 @@
 #TODO - find out how to attache eni's to instances in different subnets - is this possible?
+resource "aws_network_interface" "this" {
+  for_each          = { for k, v in local.instance_enis : v.eni_name => v }
+  subnet_id         = data.aws_subnets.this[each.value.subnet].ids[0]
+  private_ips       = each.value.ips
+  security_groups   = each.value.security_groups
+  source_dest_check = each.value.src_dst_check
+  tags = merge(
+    { Name = each.value.eni_name },
+    var.tags
+  )
+}
+
+resource "aws_instance" "pan" {
+  for_each      = var.instances
+  instance_type = each.value.instance_type
+  ami = "ami-0d952f6fcedfc9e56"
+  user_data     = ""
+  dynamic "network_interface" {
+    for_each = each.value.network_interfaces
+    content {
+      device_index         = network_interface.value.index
+      network_interface_id = aws_network_interface.this[network_interface.key].id
+    }
+  }
+  tags = merge(
+    { Name = each.key }, var.tags
+  )
+}
+
+#resource "awsip" "this" {}

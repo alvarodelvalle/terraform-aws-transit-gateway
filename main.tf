@@ -31,7 +31,7 @@ resource "aws_ec2_transit_gateway_vpc_attachment" "this" {
       Name = join("-", compact([var.name, each.key]))
     },
     var.tags,
-    var.tgw_vpc_attachment_tags,
+    each.value.tags,
   )
   depends_on = [aws_subnet.private, aws_subnet.public]
 }
