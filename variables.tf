@@ -548,9 +548,9 @@ variable "tgw_route_tables" {
     tgw-rt-spoke-us-east = {
       transit_gateway_name = "tgw-security-us-east"
       # TODO - need to obtain spoke VPC configs to add as associated attachments
-      associations = ["tgw-attach-security-us-east", "tgw-attach-inbound-us-east"]
+      associations = []
       # TODO - need to obtain Datacenter Attachments and add as propagations
-      route_propagations = ["tgw-attach-security-us-east"]
+      route_propagations = ["tgw-attach-security-us-east", "tgw-attach-inbound-us-east"]
       routes = {
         "10.201.3.0/24" = {
           type       = "Active"
