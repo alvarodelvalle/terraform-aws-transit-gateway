@@ -49,34 +49,25 @@ resource "aws_ec2_transit_gateway_route_table" "this" {
   depends_on = [aws_ec2_transit_gateway.this]
 }
 
-#resource "aws_ec2_transit_gateway_route" "this" {
-#  count = length(local.vpc_attachments_with_routes)
-#  destination_cidr_block = local.vpc_attachments_with_routes[count.index][1]["destination_cidr_block"]
-#  blackhole              = lookup(local.vpc_attachments_with_routes[count.index][1], "blackhole", null)
-#  transit_gateway_route_table_id = var.create_tgw ? aws_ec2_transit_gateway_route_table.this[0].id : var.transit_gateway_route_table_id
-#  transit_gateway_attachment_id  = tobool(lookup(local.vpc_attachments_with_routes[count.index][1], "blackhole", false)) == false ? aws_ec2_transit_gateway_vpc_attachment.this[local.vpc_attachments_with_routes[count.index][0]["key"]].id : null
-#}
-#
-#resource "aws_ec2_transit_gateway_route_table_association" "this" {
-#  for_each = local.vpc_attachments_without_default_route_table_association
-#  # Create association if it was not set already by aws_ec2_transit_gateway_vpc_attachment resource
-#  transit_gateway_attachment_id  = aws_ec2_transit_gateway_vpc_attachment.this[each.key].id
-#  transit_gateway_route_table_id = coalesce(lookup(each.value, "transit_gateway_route_table_id", null), var.transit_gateway_route_table_id, aws_ec2_transit_gateway_route_table.this[0].id)
-#}
-#
-#resource "aws_ec2_transit_gateway_route_table_propagation" "this" {
-#  for_each = local.vpc_attachments_without_default_route_table_propagation
-#  # Create association if it was not set already by aws_ec2_transit_gateway_vpc_attachment resource
-#  transit_gateway_attachment_id  = aws_ec2_transit_gateway_vpc_attachment.this[each.key].id
-#  transit_gateway_route_table_id = coalesce(lookup(each.value, "transit_gateway_route_table_id", null), var.transit_gateway_route_table_id, aws_ec2_transit_gateway_route_table.this[0].id)
-#}
+resource "aws_ec2_transit_gateway_route_table_association" "this" {
+  for_each                       = { for k, v in local.tgw_rtb_associations : "${v.tgw_route_table}:${v.tgw_attachment}" => v }
+  transit_gateway_attachment_id  = aws_ec2_transit_gateway_vpc_attachment.this[each.value.tgw_attachment].id
+  transit_gateway_route_table_id = aws_ec2_transit_gateway_route_table.this[each.value.tgw_route_table].id
+}
 
-#resource "aws_route" "tgw" {
-#  for_each = { for x in local.vpc_route_table_destination_cidr : x.rtb_id => x.cidr }
-#  route_table_id         = each.key
-#  destination_cidr_block = each.value
-#  transit_gateway_id     = aws_ec2_transit_gateway.this[0].id
-#}
+resource "aws_ec2_transit_gateway_route_table_propagation" "this" {
+  for_each                       = { for k, v in local.tgw_rtb_propagations : "${v.tgw_route_table}:${v.tgw_attachment}" => v }
+  transit_gateway_attachment_id  = aws_ec2_transit_gateway_vpc_attachment.this[each.value.tgw_attachment].id
+  transit_gateway_route_table_id = aws_ec2_transit_gateway_route_table.this[each.value.tgw_route_table].id
+}
+
+resource "aws_ec2_transit_gateway_route" "this" {
+  for_each                       = { for k, v in local.tgw_routes : "${v.tgw_route_table}:${v.tgw_attachment}:${v.cidr}" => v }
+  destination_cidr_block         = each.value.cidr
+  blackhole                      = each.value.type == "Active" ? false : true
+  transit_gateway_attachment_id  = aws_ec2_transit_gateway_vpc_attachment.this[each.value.tgw_attachment].id
+  transit_gateway_route_table_id = aws_ec2_transit_gateway_route_table.this[each.value.tgw_route_table].id
+}
 
 ###########################
 ## Resource Access Manager
@@ -115,5 +106,3 @@ resource "aws_ec2_transit_gateway_route_table" "this" {
 #
 #  share_arn = var.ram_resource_share_arn
 #}
-
-#TODO - find out how to attache eni's to instances in different subnets - is this possible?

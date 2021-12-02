@@ -288,8 +288,8 @@ variable "vpc_route_tables" {
       vpc_name = "vpc-security-us-east"
       routes = [
         {
-          route_cidr_destination    = "0.0.0.0/0"
-          transit_gateway_name      = "tgw-security-us-east"
+          route_cidr_destination = "0.0.0.0/0"
+          transit_gateway_name   = "tgw-security-us-east"
         }
       ]
     }
@@ -297,8 +297,8 @@ variable "vpc_route_tables" {
       vpc_name = "vpc-security-us-east"
       routes = [
         {
-          route_cidr_destination    = "0.0.0.0/0"
-          gateway_name              = "igw-security-us-east"
+          route_cidr_destination = "0.0.0.0/0"
+          gateway_name           = "igw-security-us-east"
         }
       ]
     }
@@ -310,8 +310,8 @@ variable "vpc_route_tables" {
       vpc_name = "vpc-security-us-east"
       routes = [
         {
-          route_cidr_destination    = "0.0.0.0/0"
-          vpc_endpoint_name         = "gwlbe-security-us-east-1a"
+          route_cidr_destination = "0.0.0.0/0"
+          vpc_endpoint_name      = "gwlbe-security-us-east-1a"
         }
       ]
     }
@@ -319,8 +319,8 @@ variable "vpc_route_tables" {
       vpc_name = "vpc-security-us-east"
       routes = [
         {
-          route_cidr_destination    = "0.0.0.0/0"
-          vpc_endpoint_name         = "gwlbe-security-us-east-1b"
+          route_cidr_destination = "0.0.0.0/0"
+          vpc_endpoint_name      = "gwlbe-security-us-east-1b"
         }
       ]
     }
@@ -328,8 +328,8 @@ variable "vpc_route_tables" {
       vpc_name = "vpc-security-us-east"
       routes = [
         {
-          route_cidr_destination    = "0.0.0.0/0"
-          transit_gateway_name      = "tgw-security-us-east"
+          route_cidr_destination = "0.0.0.0/0"
+          transit_gateway_name   = "tgw-security-us-east"
         }
       ]
     }
@@ -337,20 +337,20 @@ variable "vpc_route_tables" {
       vpc_name = "vpc-inbound-us-east"
       routes = [
         {
-          route_cidr_destination    = "10.200.1.0/24"
+          route_cidr_destination = "10.200.1.0/24"
           vpc_endpoint_name      = "gwlbe-inbound-app1-us-east-1a"
         },
         {
           route_cidr_destination = "10.200.65.0/24"
-          vpc_endpoint_name = "gwlbe-inbound-app1-us-east-1b"
+          vpc_endpoint_name      = "gwlbe-inbound-app1-us-east-1b"
         },
         {
           route_cidr_destination = "10.200.3.0/24"
-          vpc_endpoint_name = "gwlbe-inbound-app2-us-east-1a"
+          vpc_endpoint_name      = "gwlbe-inbound-app2-us-east-1a"
         },
         {
           route_cidr_destination = "10.200.67.0/24"
-          vpc_endpoint_name = "gwlbe-inbound-app2-us-east-1b"
+          vpc_endpoint_name      = "gwlbe-inbound-app2-us-east-1b"
         }
       ]
     }
@@ -358,9 +358,9 @@ variable "vpc_route_tables" {
       vpc_name = "vpc-inbound-us-east"
       routes = [
         {
-          route_cidr_destination    = "0.0.0.0/0"
-          gateway_name      = "igw-inbound-us-east"
-          vpc_name = "vpc-inbound-us-east"
+          route_cidr_destination = "0.0.0.0/0"
+          gateway_name           = "igw-inbound-us-east"
+          vpc_name               = "vpc-inbound-us-east"
         }
       ]
     }
@@ -368,56 +368,56 @@ variable "vpc_route_tables" {
       vpc_name = "vpc-inbound-us-east"
       routes = [
         {
-          route_cidr_destination    = "0.0.0.0/0"
+          route_cidr_destination = "0.0.0.0/0"
           vpc_endpoint_name      = "gwlbe-inbound-app1-us-east-1a"
         },
-#        TODO - add application subnet cidr once app vpc are created
-#        {
-#          route_cidr_destination    = ""
-#          transit_gateway_name      = "tgw-security-us-east"
-#        }
+        #        TODO - add application subnet cidr once app vpc are created
+        #        {
+        #          route_cidr_destination    = ""
+        #          transit_gateway_name      = "tgw-security-us-east"
+        #        }
       ]
     }
     rt-inbound-alb-app1-us-east-1b = {
       vpc_name = "vpc-inbound-us-east"
       routes = [
         {
-          route_cidr_destination    = "0.0.0.0/0"
+          route_cidr_destination = "0.0.0.0/0"
           vpc_endpoint_name      = "gwlbe-inbound-app1-us-east-1a"
         },
-#        TODO - add application subnet cidr once app vpc are created
-#        {
-#          route_cidr_destination    = ""
-#          transit_gateway_name      = "tgw-security-us-east"
-#        }
+        #        TODO - add application subnet cidr once app vpc are created
+        #        {
+        #          route_cidr_destination    = ""
+        #          transit_gateway_name      = "tgw-security-us-east"
+        #        }
       ]
     }
     rt-inbound-alb-app2-us-east-1a = {
       vpc_name = "vpc-inbound-us-east"
       routes = [
         {
-          route_cidr_destination    = "0.0.0.0/0"
+          route_cidr_destination = "0.0.0.0/0"
           vpc_endpoint_name      = "gwlbe-inbound-app2-us-east-1a"
         },
-#        TODO - add application subnet cidr once app vpc are created
-#        {
-#          route_cidr_destination    = ""
-#          transit_gateway_name      = "tgw-security-us-east"
-#        }
+        #        TODO - add application subnet cidr once app vpc are created
+        #        {
+        #          route_cidr_destination    = ""
+        #          transit_gateway_name      = "tgw-security-us-east"
+        #        }
       ]
     }
     rt-inbound-alb-app2-us-east-1b = {
       vpc_name = "vpc-inbound-us-east"
       routes = [
         {
-          route_cidr_destination    = "0.0.0.0/0"
+          route_cidr_destination = "0.0.0.0/0"
           vpc_endpoint_name      = "gwlbe-inbound-app2-us-east-1a"
         },
-#        TODO - add application subnet cidr once app vpc are created
-#        {
-#          route_cidr_destination    = ""
-#          transit_gateway_name      = "tgw-security-us-east"
-#        }
+        #        TODO - add application subnet cidr once app vpc are created
+        #        {
+        #          route_cidr_destination    = ""
+        #          transit_gateway_name      = "tgw-security-us-east"
+        #        }
       ]
     }
   }
@@ -425,7 +425,7 @@ variable "vpc_route_tables" {
 
 variable "rt_subnet_associations_list" {
   description = "Route table to subnet association"
-  type = list(string)
+  type        = list(string)
   default = [
     "rt-security-mgmt-us-east:sn-security-mgmt-us-east-1a",
     "rt-security-mgmt-us-east:sn-security-mgmt-us-east-1b",
@@ -450,7 +450,7 @@ variable "rt_subnet_associations_list" {
 
 variable "rt_gateway_associations_list" {
   description = "Route table to subnet association"
-  type = list(string)
+  type        = list(string)
   default = [
     "rt-inbound-public-us-east:vpc-inbound-us-east",
   ]
@@ -541,34 +541,57 @@ variable "tgw_vpc_attachments" {
   }
 }
 
+
 variable "tgw_route_tables" {
   description = ""
   default = {
-    #TODO - add more context and tf resources in main.tf once vpc's are defined
     tgw-rt-spoke-us-east = {
       transit_gateway_name = "tgw-security-us-east"
-      # vpc_associations     = ["vpc-security-us-east", "vpc-inbound-us-east"]
-      vpc_associations   = []
+      # TODO - need to obtain spoke VPC configs to add as associated attachments
+      associations = ["tgw-attach-security-us-east", "tgw-attach-inbound-us-east"]
+      # TODO - need to obtain Datacenter Attachments and add as propagations
       route_propagations = ["tgw-attach-security-us-east"]
-      routes             = ["10.201.3.0/24", "10.201.67.0/24"]
+      routes = {
+        "10.201.3.0/24" = {
+          type       = "Active"
+          attachment = "tgw-attach-security-us-east"
+        }
+        "10.201.67.0/24" = {
+          type       = "Active"
+          attachment = "tgw-attach-security-us-east"
+        }
+      }
       tgw_route_table_tags = {
         Purpose = "TGW Route Table for Spoke VPC"
       }
     }
     tgw-rt-security-us-east = {
       transit_gateway_name = "tgw-security-us-east"
-      vpc_associations     = ["tgw-attach-security-us-east"]
-      route_propagations   = ["tgw-attach-security-us-east"]
-      routes               = ["10.201.3.0/24", "10.201.67.0/24"]
+      # TODO - need to obtain Datacenter Attachments and add as associations
+      associations = ["tgw-attach-security-us-east"]
+      # TODO - need to obtain spoke VPC configs to add as propagations
+      # TODO - need to obtain Datacenter Attachments to add as propagations
+      route_propagations = ["tgw-attach-security-us-east"]
+      routes = {
+        "10.201.3.0/24" = {
+          type       = "Active"
+          attachment = "tgw-attach-security-us-east"
+        }
+        "10.201.67.0/24" = {
+          type       = "Active"
+          attachment = "tgw-attach-security-us-east"
+        }
+      }
       tgw_route_table_tags = {
         Purpose = "TGW Route Table for Security VPC"
       }
     }
     tgw-rt-inbound-us-east = {
       transit_gateway_name = "tgw-security-us-east"
-      vpc_associations     = ["tgw-attach-inbound-us-east"]
-      route_propagations   = ["tgw-attach-inbound-us-east"]
-      routes               = []
+      associations         = ["tgw-attach-inbound-us-east"]
+      # TODO - need to obtain All App VPC attachments to add as propagations
+      route_propagations = ["tgw-attach-inbound-us-east"]
+      routes             = {}
       tgw_route_table_tags = {
         Purpose = "TGW Route Table for Inbound VPC"
       }
@@ -598,8 +621,8 @@ variable "elbs" {
             "10.201.1.10",
             "10.201.64.10"
           ]
-          health_check_path = "/php/login.php"
-          health_check_port = 443
+          health_check_path     = "/php/login.php"
+          health_check_port     = 443
           health_check_protocol = "HTTPS"
         }
       }
@@ -624,8 +647,8 @@ variable "elbs" {
           targets = [
             #TODO - IP Addresses of application servers and ports
           ]
-          health_check_path = "/"
-          health_check_port = 80
+          health_check_path     = "/"
+          health_check_port     = 80
           health_check_protocol = "HTTP"
         }
       }
@@ -656,8 +679,8 @@ variable "elbs" {
           targets = [
             #TODO - IP Addresses of application servers and ports
           ]
-          health_check_path = "/"
-          health_check_port = 80
+          health_check_path     = "/"
+          health_check_port     = 80
           health_check_protocol = "HTTP"
         }
       }
