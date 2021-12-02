@@ -437,6 +437,22 @@ variable "rt_subnet_associations_list" {
     "rt-security-tgw-us-east-1b:sn-security-tgw-us-east-1b",
     "rt-security-gwlbe-us-east:sn-security-gwlbe-us-east-1a",
     "rt-security-gwlbe-us-east:sn-security-gwlbe-us-east-1b",
+    "rt-inbound-gwlbe-us-east:sn-inbound-gwlbe-app1-us-east-1a",
+    "rt-inbound-gwlbe-us-east:sn-inbound-gwlbe-app1-us-east-1b",
+    "rt-inbound-gwlbe-us-east:sn-inbound-gwlbe-app2-us-east-1a",
+    "rt-inbound-gwlbe-us-east:sn-inbound-gwlbe-app2-us-east-1b",
+    "rt-inbound-alb-app1-us-east-1a:sn-inbound-alb-app1-us-east-1a",
+    "rt-inbound-alb-app1-us-east-1b:sn-inbound-alb-app1-us-east-1b",
+    "rt-inbound-alb-app2-us-east-1a:sn-inbound-alb-app2-us-east-1a",
+    "rt-inbound-alb-app2-us-east-1b:sn-inbound-alb-app2-us-east-1b",
+  ]
+}
+
+variable "rt_gateway_associations_list" {
+  description = "Route table to subnet association"
+  type = list(string)
+  default = [
+    "rt-inbound-public-us-east:vpc-inbound-us-east",
   ]
 }
 

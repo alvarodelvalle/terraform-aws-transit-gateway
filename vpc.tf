@@ -82,6 +82,13 @@ resource "aws_route_table_association" "subnets" {
   depends_on     = [aws_subnet.public, aws_subnet.private]
 }
 
+resource "aws_route_table_association" "gateways" {
+  for_each       = toset(var.rt_gateway_associations_list)
+  route_table_id = aws_route_table.this[split(":", each.value)[0]].id
+  gateway_id     = data.aws_internet_gateway.this[split(":", each.value)[1]].id
+  depends_on     = [aws_subnet.public, aws_subnet.private]
+}
+
 resource "aws_vpc_endpoint" "this" {
   for_each          = var.vpc_endpoints
   auto_accept       = true
