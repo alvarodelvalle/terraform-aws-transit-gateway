@@ -13,11 +13,11 @@ data "aws_ec2_transit_gateway" "this" {
     name   = "tag:Name"
     values = [each.key]
   }
-  filter{
+  filter {
     name   = "state"
     values = ["available"]
   }
-  
+
   depends_on = [aws_ec2_transit_gateway.this]
 }
 

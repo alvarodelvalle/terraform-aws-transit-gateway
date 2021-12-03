@@ -34,8 +34,10 @@ resource "aws_lb_target_group" "ip" {
   port        = "80"
   vpc_id      = aws_vpc.this[each.value.vpc_name].id
   health_check {
-    path    = "/"
-    matcher = "200-499"
+    path     = each.value.target_hc_path
+    port     = each.value.target_hc_port
+    protocol = each.value.target_hc_protocol
+    matcher  = "200-499"
   }
 }
 
@@ -51,8 +53,8 @@ resource "aws_lb_target_group" "ip" {
 resource "aws_lb_listener" "this" {
   for_each          = { for l in local.lb_listeners : "${l.lb_key}:${l.port}" => l }
   load_balancer_arn = aws_lb.this[split(":", each.key)[0]].arn
-  port              = each.value[0].port
-  protocol          = each.value[0].protocol
+  port              = each.value.port
+  protocol          = each.value.protocol
   default_action {
     type             = "forward"
     target_group_arn = aws_lb_target_group.ip[each.value.target_group].arn

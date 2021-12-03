@@ -8,6 +8,12 @@ variable "tags" {
   }
 }
 
+variable "name" {
+  description = "Name to be used on all the resources as identifier"
+  type        = string
+  default     = ""
+}
+
 variable "vpcs" {
   description = "VPC's defined as a map"
   type        = any
@@ -111,7 +117,7 @@ variable "private_subnets" {
     },
     sn-security-private-us-east-1b = {
       vpc_name                = "vpc-security-us-east"
-      availability_zone       = "us-east-1a"
+      availability_zone       = "us-east-1b"
       cidr_block              = "10.201.65.0/24"
       map_public_ip_on_launch = false
       tags = {
@@ -288,109 +294,207 @@ variable "vpc_route_tables" {
       vpc_name = "vpc-security-us-east"
       routes = [
         {
-          route_cidr_destination    = "0.0.0.0/0"
-          transit_gateway_name      = "tgw-security-us-east"
-          route_subnets_association = ["sn-security-mgmt-us-east-1a", "sn-security-mgmt-us-east-1b"]
+          route_cidr_destination = "0.0.0.0/0"
+          transit_gateway_name   = "tgw-security-us-east"
         }
       ]
-    },
+    }
     rt-security-public-us-east = {
       vpc_name = "vpc-security-us-east"
       routes = [
         {
-          route_cidr_destination    = "0.0.0.0/0"
-          gateway_name              = "igw-security-us-east"
-          route_subnets_association = ["sn-security-public-us-east-1a", "sn-security-public-us-east-1b"]
+          route_cidr_destination = "0.0.0.0/0"
+          gateway_name           = "igw-security-us-east"
         }
       ]
-    },
+    }
     rt-security-private-us-east = {
       vpc_name = "vpc-security-us-east"
       routes   = []
-    },
+    }
     rt-security-tgw-us-east-1a = {
       vpc_name = "vpc-security-us-east"
       routes = [
         {
-          route_cidr_destination    = "0.0.0.0/0"
-          vpc_endpoint_name         = "gwlbe-security-us-east-1a"
-          route_subnets_association = ["sn-security-tgw-us-east-1a"]
+          route_cidr_destination = "0.0.0.0/0"
+          vpc_endpoint_name      = "gwlbe-security-us-east-1a"
         }
       ]
-    },
+    }
     rt-security-tgw-us-east-1b = {
       vpc_name = "vpc-security-us-east"
       routes = [
         {
-          route_cidr_destination    = "0.0.0.0/0"
-          vpc_endpoint_name         = "gwlbe-security-us-east-1b"
-          route_subnets_association = ["sn-security-tgw-us-east-1b"]
+          route_cidr_destination = "0.0.0.0/0"
+          vpc_endpoint_name      = "gwlbe-security-us-east-1b"
         }
       ]
-    },
+    }
     rt-security-gwlbe-us-east = {
       vpc_name = "vpc-security-us-east"
       routes = [
         {
-          route_cidr_destination    = "0.0.0.0/0"
-          transit_gateway_name      = "tgw-security-us-east"
-          route_subnets_association = ["sn-security-gwlbe-us-east-1a", "sn-security-gwlbe-us-east-1b"]
+          route_cidr_destination = "0.0.0.0/0"
+          transit_gateway_name   = "tgw-security-us-east"
         }
       ]
-    },
-
-  }
-}
-
-variable "route_table_subnet_associations" {
-  description = ""
-  default = {
-    rt-security-mgmt-us-east = {
-      route_subnet_association = "sn-security-mgmt-us-east-1a"
-    },
-    rt-security-mgmt-us-east = {
-      route_subnet_association = "sn-security-mgmt-us-east-1b"
-    },
-    rt-security-public-us-east = {
-      route_subnet_association = "sn-security-public-us-east-1a"
-    },
-    rt-security-public-us-east = {
-      route_subnet_association = "sn-security-public-us-east-1b"
-    },
-    rt-security-private-us-east = {
-      route_subnet_association = "sn-security-private-us-east-1a"
-    },
-    rt-security-private-us-east = {
-      route_subnet_association = "sn-security-private-us-east-1b"
-    },
-    rt-security-tgw-us-east-1a = {
-      route_subnet_association = "sn-security-tgw-us-east-1a"
-    },
-    rt-security-tgw-us-east-1b = {
-      route_subnet_association = "sn-security-tgw-us-east-1b"
-    },
-    rt-security-gwlbe-us-east = {
-      route_subnet_association = "sn-security-gwlbe-us-east-1a"
-    },
-    rt-security-gwlbe-us-east = {
-      route_subnet_association = "sn-security-gwlbe-us-east-1b"
+    }
+    rt-inbound-public-us-east = {
+      vpc_name = "vpc-inbound-us-east"
+      routes = [
+        {
+          route_cidr_destination = "10.200.1.0/24"
+          vpc_endpoint_name      = "gwlbe-inbound-app1-us-east-1a"
+        },
+        {
+          route_cidr_destination = "10.200.65.0/24"
+          vpc_endpoint_name      = "gwlbe-inbound-app1-us-east-1b"
+        },
+        {
+          route_cidr_destination = "10.200.3.0/24"
+          vpc_endpoint_name      = "gwlbe-inbound-app2-us-east-1a"
+        },
+        {
+          route_cidr_destination = "10.200.67.0/24"
+          vpc_endpoint_name      = "gwlbe-inbound-app2-us-east-1b"
+        }
+      ]
+    }
+    rt-inbound-gwlbe-us-east = {
+      vpc_name = "vpc-inbound-us-east"
+      routes = [
+        {
+          route_cidr_destination = "0.0.0.0/0"
+          gateway_name           = "igw-inbound-us-east"
+          vpc_name               = "vpc-inbound-us-east"
+        }
+      ]
+    }
+    rt-inbound-alb-app1-us-east-1a = {
+      vpc_name = "vpc-inbound-us-east"
+      routes = [
+        {
+          route_cidr_destination = "0.0.0.0/0"
+          vpc_endpoint_name      = "gwlbe-inbound-app1-us-east-1a"
+        },
+        #        TODO - add application subnet cidr once app vpc are created
+        #        {
+        #          route_cidr_destination    = ""
+        #          transit_gateway_name      = "tgw-security-us-east"
+        #        }
+      ]
+    }
+    rt-inbound-alb-app1-us-east-1b = {
+      vpc_name = "vpc-inbound-us-east"
+      routes = [
+        {
+          route_cidr_destination = "0.0.0.0/0"
+          vpc_endpoint_name      = "gwlbe-inbound-app1-us-east-1a"
+        },
+        #        TODO - add application subnet cidr once app vpc are created
+        #        {
+        #          route_cidr_destination    = ""
+        #          transit_gateway_name      = "tgw-security-us-east"
+        #        }
+      ]
+    }
+    rt-inbound-alb-app2-us-east-1a = {
+      vpc_name = "vpc-inbound-us-east"
+      routes = [
+        {
+          route_cidr_destination = "0.0.0.0/0"
+          vpc_endpoint_name      = "gwlbe-inbound-app2-us-east-1a"
+        },
+        #        TODO - add application subnet cidr once app vpc are created
+        #        {
+        #          route_cidr_destination    = ""
+        #          transit_gateway_name      = "tgw-security-us-east"
+        #        }
+      ]
+    }
+    rt-inbound-alb-app2-us-east-1b = {
+      vpc_name = "vpc-inbound-us-east"
+      routes = [
+        {
+          route_cidr_destination = "0.0.0.0/0"
+          vpc_endpoint_name      = "gwlbe-inbound-app2-us-east-1a"
+        },
+        #        TODO - add application subnet cidr once app vpc are created
+        #        {
+        #          route_cidr_destination    = ""
+        #          transit_gateway_name      = "tgw-security-us-east"
+        #        }
+      ]
     }
   }
 }
 
+variable "rt_subnet_associations_list" {
+  description = "Route table to subnet association"
+  type        = list(string)
+  default = [
+    "rt-security-mgmt-us-east:sn-security-mgmt-us-east-1a",
+    "rt-security-mgmt-us-east:sn-security-mgmt-us-east-1b",
+    "rt-security-public-us-east:sn-security-public-us-east-1a",
+    "rt-security-public-us-east:sn-security-public-us-east-1b",
+    "rt-security-private-us-east:sn-security-private-us-east-1a",
+    "rt-security-private-us-east:sn-security-private-us-east-1b",
+    "rt-security-tgw-us-east-1a:sn-security-tgw-us-east-1a",
+    "rt-security-tgw-us-east-1b:sn-security-tgw-us-east-1b",
+    "rt-security-gwlbe-us-east:sn-security-gwlbe-us-east-1a",
+    "rt-security-gwlbe-us-east:sn-security-gwlbe-us-east-1b",
+    "rt-inbound-gwlbe-us-east:sn-inbound-gwlbe-app1-us-east-1a",
+    "rt-inbound-gwlbe-us-east:sn-inbound-gwlbe-app1-us-east-1b",
+    "rt-inbound-gwlbe-us-east:sn-inbound-gwlbe-app2-us-east-1a",
+    "rt-inbound-gwlbe-us-east:sn-inbound-gwlbe-app2-us-east-1b",
+    "rt-inbound-alb-app1-us-east-1a:sn-inbound-alb-app1-us-east-1a",
+    "rt-inbound-alb-app1-us-east-1b:sn-inbound-alb-app1-us-east-1b",
+    "rt-inbound-alb-app2-us-east-1a:sn-inbound-alb-app2-us-east-1a",
+    "rt-inbound-alb-app2-us-east-1b:sn-inbound-alb-app2-us-east-1b",
+  ]
+}
+
+variable "rt_gateway_associations_list" {
+  description = "Route table to subnet association"
+  type        = list(string)
+  default = [
+    "rt-inbound-public-us-east:vpc-inbound-us-east",
+  ]
+}
+
 variable "vpc_endpoints" {
   description = ""
-  type        = map(any)
+  type        = any
   default = {
     gwlbe-security-us-east-1a = {
       vpc_name              = "vpc-security-us-east"
-      endpoint_service_name = "com.amazonaws.vpce.us-east-1.vpce-svc-03c15019b985b9d19"
-      endpoint_subnet       = "sn-security-gwlbe-us-east-1a"
-    },
+      endpoint_service_name = "gwlbe-security-us-east"
+      endpoint_subnets      = ["sn-security-gwlbe-us-east-1a"]
+    }
     gwlbe-security-us-east-1b = {
       vpc_name              = "vpc-security-us-east"
-      endpoint_service_name = "com.amazonaws.vpce.us-east-1.vpce-svc-03c15019b985b9d19"
-      endpoint_subnet       = "sn-security-gwlbe-us-east-1b"
+      endpoint_service_name = "gwlbe-security-us-east"
+      endpoint_subnets      = ["sn-security-gwlbe-us-east-1b"]
+    }
+    gwlbe-inbound-app1-us-east-1a = {
+      vpc_name              = "vpc-inbound-us-east"
+      endpoint_service_name = "gwlbe-security-us-east"
+      endpoint_subnets      = ["sn-inbound-gwlbe-app1-us-east-1a"]
+    }
+    gwlbe-inbound-app1-us-east-1b = {
+      vpc_name              = "vpc-inbound-us-east"
+      endpoint_service_name = "gwlbe-security-us-east"
+      endpoint_subnets      = ["sn-inbound-gwlbe-app1-us-east-1b"]
+    }
+    gwlbe-inbound-app2-us-east-1a = {
+      vpc_name              = "vpc-inbound-us-east"
+      endpoint_service_name = "gwlbe-security-us-east"
+      endpoint_subnets      = ["sn-inbound-gwlbe-app2-us-east-1a"]
+    }
+    gwlbe-inbound-app2-us-east-1b = {
+      vpc_name              = "vpc-inbound-us-east"
+      endpoint_service_name = "gwlbe-security-us-east"
+      endpoint_subnets      = ["sn-inbound-gwlbe-app2-us-east-1b"]
     }
   }
 }
@@ -428,6 +532,7 @@ variable "tgw_vpc_attachments" {
       appliance_mode_support                          = true
       transit_gateway_default_route_table_association = false
       transit_gateway_default_route_table_propagation = false
+      tags                                            = {}
     }
     tgw-attach-inbound-us-east = {
       vpc_name                                        = "vpc-inbound-us-east"
@@ -439,38 +544,62 @@ variable "tgw_vpc_attachments" {
       appliance_mode_support                          = true
       transit_gateway_default_route_table_association = false
       transit_gateway_default_route_table_propagation = false
+      tags                                            = {}
     }
   }
 }
 
+
 variable "tgw_route_tables" {
   description = ""
   default = {
-    #TODO - add more context and tf resources in main.tf once vpc's are defined
     tgw-rt-spoke-us-east = {
       transit_gateway_name = "tgw-security-us-east"
-      # vpc_associations     = ["vpc-security-us-east", "vpc-inbound-us-east"]
-      vpc_associations   = []
-      route_propagations = ["tgw-attach-security-us-east"]
-      routes             = ["10.201.3.0/24", "10.201.67.0/24"]
+      # TODO - need to obtain spoke VPC configs to add as associated attachments
+      associations = []
+      # TODO - need to obtain Datacenter Attachments and add as propagations
+      route_propagations = ["tgw-attach-security-us-east", "tgw-attach-inbound-us-east"]
+      routes = {
+        "10.201.3.0/24" = {
+          type       = "Active"
+          attachment = "tgw-attach-security-us-east"
+        }
+        "10.201.67.0/24" = {
+          type       = "Active"
+          attachment = "tgw-attach-security-us-east"
+        }
+      }
       tgw_route_table_tags = {
         Purpose = "TGW Route Table for Spoke VPC"
       }
     }
     tgw-rt-security-us-east = {
       transit_gateway_name = "tgw-security-us-east"
-      vpc_associations     = ["tgw-attach-security-us-east"]
-      route_propagations   = ["tgw-attach-security-us-east"]
-      routes               = ["10.201.3.0/24", "10.201.67.0/24"]
+      # TODO - need to obtain Datacenter Attachments and add as associations
+      associations = ["tgw-attach-security-us-east"]
+      # TODO - need to obtain spoke VPC configs to add as propagations
+      # TODO - need to obtain Datacenter Attachments to add as propagations
+      route_propagations = ["tgw-attach-security-us-east"]
+      routes = {
+        "10.201.3.0/24" = {
+          type       = "Active"
+          attachment = "tgw-attach-security-us-east"
+        }
+        "10.201.67.0/24" = {
+          type       = "Active"
+          attachment = "tgw-attach-security-us-east"
+        }
+      }
       tgw_route_table_tags = {
         Purpose = "TGW Route Table for Security VPC"
       }
     }
     tgw-rt-inbound-us-east = {
       transit_gateway_name = "tgw-security-us-east"
-      vpc_associations     = ["tgw-attach-inbound-us-east"]
-      route_propagations   = ["tgw-attach-inbound-us-east"]
-      routes               = []
+      associations         = ["tgw-attach-inbound-us-east"]
+      # TODO - need to obtain All App VPC attachments to add as propagations
+      route_propagations = ["tgw-attach-inbound-us-east"]
+      routes             = {}
       tgw_route_table_tags = {
         Purpose = "TGW Route Table for Inbound VPC"
       }
@@ -500,6 +629,9 @@ variable "elbs" {
             "10.201.1.10",
             "10.201.64.10"
           ]
+          health_check_path     = "/php/login.php"
+          health_check_port     = 443
+          health_check_protocol = "HTTPS"
         }
       }
       listeners = {} #need this ATM because of local.lb_listeners
@@ -523,6 +655,9 @@ variable "elbs" {
           targets = [
             #TODO - IP Addresses of application servers and ports
           ]
+          health_check_path     = "/"
+          health_check_port     = 80
+          health_check_protocol = "HTTP"
         }
       }
       listeners = {
@@ -552,6 +687,9 @@ variable "elbs" {
           targets = [
             #TODO - IP Addresses of application servers and ports
           ]
+          health_check_path     = "/"
+          health_check_port     = 80
+          health_check_protocol = "HTTP"
         }
       }
       listeners = {
@@ -715,20 +853,104 @@ variable "security_groups" {
   }
 }
 
-variable "create_tgw" {
-  description = "Controls if TGW should be created (it affects almost all resources)"
-  type        = bool
-  default     = true
+variable "instances" {
+  description = ""
+  type        = any
+  default = {
+    panfw-security-us-east-1a = {
+      instance_type   = "m5.xlarge"
+      subnet          = "sn-security-mgmt-us-east-1a"
+      security_groups = ["security-mgmt-us-east"]
+      az              = "us-east-1a"
+      network_interfaces = {
+        eni-panfw-us-east-1a-mgmt = {
+          index           = 0
+          subnet          = "sn-security-mgmt-us-east-1a"
+          ips             = ["10.201.0.10"]
+          security_groups = ["security-mgmt-us-east"]
+          src_dst_check   = false
+          tags = {
+            Purpose = "Firewall Management"
+          }
+        }
+        eni-panfw-us-east-1a-private = {
+          index           = 1
+          subnet          = "sn-security-private-us-east-1a"
+          ips             = ["10.201.1.10"]
+          security_groups = ["security-mgmt-us-east"]
+          src_dst_check   = false
+          tags = {
+            Purpose = "Firewall Private Interface"
+          }
+        }
+        eni-panfw-us-east-1a-public = {
+          index           = 2
+          subnet          = "sn-security-public-us-east-1a"
+          ips             = ["10.201.2.10"]
+          security_groups = ["security-mgmt-us-east"]
+          src_dst_check   = false
+          tags = {
+            Purpose = "Firewall Public Interface"
+          }
+        }
+      }
+    }
+    panfw-security-us-east-1b = {
+      instance_type   = "m5.xlarge"
+      subnet          = "sn-security-mgmt-us-east-1b"
+      security_groups = ["security-mgmt-us-east"]
+      az              = "us-east-1b"
+      network_interfaces = {
+        eni-panfw-us-east-1b-mgmt = {
+          index           = 0
+          subnet          = "sn-security-mgmt-us-east-1b"
+          ips             = ["10.201.64.10"]
+          security_groups = ["security-mgmt-us-east"]
+          src_dst_check   = false
+          tags = {
+            Purpose = "Firewall Management"
+          }
+        }
+        eni-panfw-us-east-1b-private = {
+          index           = 1
+          subnet          = "sn-security-private-us-east-1b"
+          ips             = ["10.201.65.10"]
+          security_groups = ["security-mgmt-us-east"]
+          src_dst_check   = false
+          tags = {
+            Purpose = "Firewall Private Interface"
+          }
+        }
+        eni-panfw-us-east-1b-public = {
+          index           = 2
+          subnet          = "sn-security-public-us-east-1b"
+          ips             = ["10.201.66.10"]
+          security_groups = ["security-mgmt-us-east"]
+          src_dst_check   = false
+          tags = {
+            Purpose = "Firewall Public Interface"
+          }
+        }
+      }
+    }
+  }
 }
 
-variable "name" {
-  description = "Name to be used on all the resources as identifier"
-  type        = string
-  default     = ""
-}
-
-variable "tgw_vpc_attachment_tags" {
-  description = "Additional tags for VPC attachments"
-  type        = map(string)
-  default     = null
+variable "eips" {
+  description = ""
+  type        = any
+  default = {
+    eip-security-panfw-us-east-1a = {
+      allocation = "eni-panfw-us-east-1a-public"
+      tags = {
+        Purpose = "Public Address for Outbound traffic to IGW"
+      }
+    }
+    eip-security-panfw-us-east-1b = {
+      allocation = "eni-panfw-us-east-1b-public"
+      tags = {
+        Purpose = "Public Address for Outbound traffic to IGW"
+      }
+    }
+  }
 }
