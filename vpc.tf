@@ -73,6 +73,11 @@ resource "aws_route_table" "this" {
       vpc_endpoint_id = lookup(route.value, "vpc_endpoint_name", null) != null ? aws_vpc_endpoint.this[route.value["vpc_endpoint_name"]].id : null
     }
   }
+  timeouts {
+    create = "15m"
+    update = "5m"
+    delete = "30m"
+  }
 }
 
 resource "aws_route_table_association" "subnets" {
