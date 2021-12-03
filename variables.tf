@@ -117,7 +117,7 @@ variable "private_subnets" {
     },
     sn-security-private-us-east-1b = {
       vpc_name                = "vpc-security-us-east"
-      availability_zone       = "us-east-1a"
+      availability_zone       = "us-east-1b"
       cidr_block              = "10.201.65.0/24"
       map_public_ip_on_launch = false
       tags = {
@@ -855,81 +855,102 @@ variable "security_groups" {
 
 variable "instances" {
   description = ""
-  type = any
+  type        = any
   default = {
     panfw-security-us-east-1a = {
-      instance_type = "m5.xlarge"
-      subnet = "sn-security-mgmt-us-east-1a"
+      instance_type   = "m5.xlarge"
+      subnet          = "sn-security-mgmt-us-east-1a"
+      security_groups = ["security-mgmt-us-east"]
+      az              = "us-east-1a"
       network_interfaces = {
         eni-panfw-us-east-1a-mgmt = {
-          index = 0
-          subnet         = "sn-security-mgmt-us-east-1a"
-          ips            = ["10.201.0.10"]
+          index           = 0
+          subnet          = "sn-security-mgmt-us-east-1a"
+          ips             = ["10.201.0.10"]
           security_groups = ["security-mgmt-us-east"]
-          src_dst_check  = false
+          src_dst_check   = false
           tags = {
             Purpose = "Firewall Management"
           }
         }
         eni-panfw-us-east-1a-private = {
-          index = 1
-          subnet         = "sn-security-private-us-east-1a"
-          ips            = ["10.201.1.10"]
+          index           = 1
+          subnet          = "sn-security-private-us-east-1a"
+          ips             = ["10.201.1.10"]
           security_groups = ["security-mgmt-us-east"]
-          src_dst_check  = false
+          src_dst_check   = false
           tags = {
             Purpose = "Firewall Private Interface"
           }
         }
         eni-panfw-us-east-1a-public = {
-          index = 2
-          subnet         = "sn-security-public-us-east-1a"
-          ips            = ["10.201.2.10"]
+          index           = 2
+          subnet          = "sn-security-public-us-east-1a"
+          ips             = ["10.201.2.10"]
           security_groups = ["security-mgmt-us-east"]
-          src_dst_check  = false
+          src_dst_check   = false
           tags = {
             Purpose = "Firewall Public Interface"
           }
         }
       }
-      security_groups = ["sg-security-mgmt-us-east"]
     }
     panfw-security-us-east-1b = {
-      instance_type = "m5.xlarge"
-      subnet = "sn-security-mgmt-us-east-1b"
+      instance_type   = "m5.xlarge"
+      subnet          = "sn-security-mgmt-us-east-1b"
+      security_groups = ["security-mgmt-us-east"]
+      az              = "us-east-1b"
       network_interfaces = {
         eni-panfw-us-east-1b-mgmt = {
-          index = 0
-          subnet         = "sn-security-mgmt-us-east-1b"
-          ips            = ["10.201.64.10"]
+          index           = 0
+          subnet          = "sn-security-mgmt-us-east-1b"
+          ips             = ["10.201.64.10"]
           security_groups = ["security-mgmt-us-east"]
-          src_dst_check  = false
+          src_dst_check   = false
           tags = {
             Purpose = "Firewall Management"
           }
         }
         eni-panfw-us-east-1b-private = {
-          index = 1
-          subnet         = "sn-security-private-us-east-1b"
-          ips            = ["10.201.65.10"]
+          index           = 1
+          subnet          = "sn-security-private-us-east-1b"
+          ips             = ["10.201.65.10"]
           security_groups = ["security-mgmt-us-east"]
-          src_dst_check  = false
+          src_dst_check   = false
           tags = {
             Purpose = "Firewall Private Interface"
           }
         }
         eni-panfw-us-east-1b-public = {
-          index = 2
-          subnet         = "sn-security-public-us-east-1b"
-          ips            = ["10.201.66.10"]
+          index           = 2
+          subnet          = "sn-security-public-us-east-1b"
+          ips             = ["10.201.66.10"]
           security_groups = ["security-mgmt-us-east"]
-          src_dst_check  = false
+          src_dst_check   = false
           tags = {
             Purpose = "Firewall Public Interface"
           }
         }
       }
-      security_groups = ["sg-security-mgmt-us-east"]
+    }
+  }
+}
+
+variable "eips" {
+  description = ""
+  type        = any
+  default = {
+    eip-security-panfw-us-east-1a = {
+      allocation = "eni-panfw-us-east-1a-public"
+      tags = {
+        Purpose = "Public Address for Outbound traffic to IGW"
+      }
+    }
+    eip-security-panfw-us-east-1b = {
+      allocation = "eni-panfw-us-east-1b-public"
+      tags = {
+        Purpose = "Public Address for Outbound traffic to IGW"
+      }
     }
   }
 }
