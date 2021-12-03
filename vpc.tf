@@ -30,11 +30,11 @@ resource "aws_subnet" "private" {
   map_public_ip_on_launch = each.value.map_public_ip_on_launch
   tags = merge(
     {
-      "Name" = each.key
-      "Tier" = "Private"
+      Name = each.key,
+      Tier = "Private"
     },
     var.tags,
-    each.value.tags
+    each.value.tags,
   )
 }
 

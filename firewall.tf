@@ -32,7 +32,6 @@ resource "aws_instance" "pan" {
 resource "aws_eip" "this" {
   for_each                  = var.eips
   vpc                       = true
-  address                   = each.value.ip_address
   network_interface         = aws_network_interface.this[each.value.allocation].id
   associate_with_private_ip = aws_network_interface.this[each.value.allocation].private_ip
   tags = merge(
