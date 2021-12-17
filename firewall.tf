@@ -16,6 +16,7 @@ resource "aws_instance" "pan" {
   ami               = "ami-0d952f6fcedfc9e56"
   user_data         = ""
   availability_zone = each.value.az
+  key_name          = each.value.key_name
   dynamic "network_interface" {
     for_each = each.value.network_interfaces
     content {
