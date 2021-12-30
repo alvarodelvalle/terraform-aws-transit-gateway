@@ -101,12 +101,26 @@ resource "aws_vpc_endpoint" "this" {
   service_name      = aws_vpc_endpoint_service.this[each.value.endpoint_service_name].service_name
   vpc_id            = aws_vpc.this[each.value.vpc_name].id
   subnet_ids        = [for x in each.value.endpoint_subnets : data.aws_subnets.this[x].ids[0]]
+  tags = merge(
+    {
+      "Name" = each.key
+    },
+    var.tags,
+    each.value.tags
+  )
 }
 
 resource "aws_vpc_endpoint_service" "this" {
   for_each                   = { for k, v in var.vpc_endpoint_service : k => v if v.type == "gateway" }
   acceptance_required        = false
   gateway_load_balancer_arns = [aws_lb.this[each.value.target].arn]
+  tags = merge(
+    {
+      "Name" = each.key
+    },
+    var.tags,
+    each.value.tags
+  )
 }
 
 resource "aws_security_group" "this" {
