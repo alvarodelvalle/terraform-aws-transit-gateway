@@ -15,7 +15,7 @@ provider "aws" {
 }
 
 module "tgw_pan" {
-  source = "github.com/mission-cloud/terraform-aws-transit-gateway.git"
+  source = "github.com/org/terraform-aws-transit-gateway.git"
   name   = ""
   vpcs = {
     vpc-security-us-east = {
